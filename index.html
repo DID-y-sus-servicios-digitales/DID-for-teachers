@@ -1,5 +1,11 @@
 <html>
 <head>
+<style>
+  mi-campo-de-texto {
+  width: 100%; /* Ancho de 300 píxeles */
+  height: 150px; /* Alto de 150 píxeles */
+}
+</style>
 <title>DID for teachers</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -33,7 +39,7 @@
 </details>
 <hr>
 <h2>inteligent notes</h2>
-<input type="text" id="nombre" width="90%" higth="45%" placeholder="type here your notes for today, it will saved for some hours or days"></input>
+<textarea class="mi-campo-de-texto" placeholder="type something, it will be saved for later" id="miCampo"></textarea>
 <button onclick="guardarDatos()">save the notes for later</button>
 <p><font face="Alata">Created by Daniel Tejedor</font></p>
 </center>
