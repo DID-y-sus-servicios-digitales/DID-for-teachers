@@ -1,20 +1,14 @@
-// Función para guardar los datos en cookies
-function guardarDatos() {
-  let nombre = document.getElementById("nombre").value;
-  let apellido = document.getElementById("apellido").value;
-  document.cookie = "nombre=" + nombre + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
-  document.cookie = "apellido=" + apellido + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+// Función para guardar el valor del campo de texto en una cookie
+function guardarValor() {
+  let valor = document.getElementById("miCampo").value;
+  document.cookie = "miCampoValor=" + valor + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
 }
 
-// Función para leer los datos de las cookies y restaurar los campos de texto
-function restaurarDatos() {
-  let nombre = getCookie("nombre");
-  let apellido = getCookie("apellido");
-  if (nombre != "") {
-    document.getElementById("nombre").value = nombre;
-  }
-  if (apellido != "") {
-    document.getElementById("apellido").value = apellido;
+// Función para leer el valor de la cookie y restaurar el campo de texto
+function restaurarValor() {
+  let valor = getCookie("miCampoValor");
+  if (valor != "") {
+    document.getElementById("micampo").value = valor;
   }
 }
 
@@ -35,5 +29,8 @@ function getCookie(nombre) {
   return "";
 }
 
-// Restaurar los datos al cargar la página
-restaurarDatos();
+// Guardar el valor cuando el usuario escribe en el campo de texto
+document.getElementById("miCampo").addEventListener("input", guardarValor);
+
+// Restaurar el valor al cargar la página
+restaurarValor();
