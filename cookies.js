@@ -29,8 +29,8 @@ function getCookie(nombre) {
   return "";
 }
 
-// Guardar el texto cuando el usuario escribe en el área de texto
-document.getElementById("miAreaTexto").addEventListener("input", guardarTexto);
+// Guardar el texto cuando se hace clic en el botón "Guardar"
+document.getElementById("guardarBtn").addEventListener("click", guardarTexto);
 
 // Restaurar el texto al cargar la página
 restaurarTexto();
