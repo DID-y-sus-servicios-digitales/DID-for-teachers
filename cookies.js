@@ -1,14 +1,15 @@
-// Función para guardar el valor del campo de texto en una cookie
-function guardarValor() {
-  let valor = document.getElementById("miCampo").value;
-  document.cookie = "miCampoValor=" + valor + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+// Función para guardar el valor del contador en una cookie
+function guardarContador(valor) {
+  document.cookie = "contador=" + valor + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
 }
 
-// Función para leer el valor de la cookie y restaurar el campo de texto
-function restaurarValor() {
-  let valor = getCookie("miCampoValor");
-  if (valor != "") {
-    document.getElementById("micampo").value = valor;
+// Función para leer el valor del contador de una cookie
+function leerContador() {
+  let contador = getCookie("contador");
+  if (contador != "") {
+    return parseInt(contador);
+  } else {
+    return 0; // Valor inicial si no hay cookie
   }
 }
 
@@ -29,8 +30,13 @@ function getCookie(nombre) {
   return "";
 }
 
-// Guardar el valor cuando el usuario escribe en el campo de texto
-document.getElementById("miCampo").addEventListener("input", guardarValor);
+// Ejemplo de uso
+let contador = leerContador(); // Leer el valor inicial de la cookie
+document.getElementById("contador").textContent = contador; // Mostrar el valor en la página
 
-// Restaurar el valor al cargar la página
-restaurarValor();
+// Función para incrementar el contador y guardar el valor
+function incrementarContador() {
+  contador++;
+  document.getElementById("contador").textContent = contador;
+  guardarContador(contador); // Guardar el valor actualizado en la cookie
+}
