@@ -66,156 +66,170 @@
         </div>
     </div>
     <script>
-        // Inicializa Firebase (reemplaza con tu configuración)
-        const firebaseConfig = {
-            apiKey: "AIzaSyDazGuaXHMpXo-5JDbYfQ8UVDxigrvGqA0",
+const questions = [];
+const questionsDiv = document.getElementById('questions');
+const previewArea = document.getElementById('previewArea');
+const newQuestionButton = document.getElementById('newQuestion');
+const questionTypeModal = document.getElementById('questionTypeModal');
+const modalClose = document.querySelector('.close');
+const modalButtons = document.querySelectorAll('.modal-content button');
+const quizLink = document.getElementById('quizLink');
+
+// Inicializa Firebase (Reemplaza con tu configuración)
+const firebaseConfig = {
+    apiKey: "AIzaSyDazGuaXHMpXo-5JDbYfQ8UVDxigrvGqA0",
   authDomain: "quizz-creator-did.firebaseapp.com",
   databaseURL: "https://quizz-creator-did-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "quizz-creator-did",
   storageBucket: "quizz-creator-did.firebasestorage.app",
   messagingSenderId: "837330124145",
   appId: "1:837330124145:web:b2c71134e0440364f90ad0
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
-        // Obtiene el ID del quiz de la URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const quizId = urlParams.get('id');
-
-        const quizContentDiv = document.getElementById('quizContent');
-        let quizData;
-        let userAnswers = {};
-        let score = 0;
-        let currentQuestionIndex = 0;
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const dynamicLinks = firebase.dynamicLinks();  // Inicializa Dynamic Links
 
 
-        if (quizId) {
-            // Recupera el quiz de Firebase
-            db.collection('quizzes').doc(quizId).get()
-                .then((doc) => {
-                    if (doc.exists) {
-                        quizData = doc.data();
-                        console.log("Datos del Quiz:", quizData);
-                        displayQuestion(currentQuestionIndex); // Mostrar la primera pregunta
-                    } else {
-                        quizContentDiv.innerHTML = '<p>Quiz no encontrado.</p>';
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error al obtener el quiz:", error);
-                    quizContentDiv.innerHTML = '<p>Error al cargar el quiz.</p>';
-                });
-        } else {
-            quizContentDiv.innerHTML = '<p>ID de quiz no proporcionado en la URL.</p>';
+newQuestionButton.addEventListener('click', () => {
+    questionTypeModal.style.display = "block";
+});
+
+modalClose.onclick = function () {
+    questionTypeModal.style.display = "none";
+}
+
+window.onclick = function (event) {
+    if (event.target == questionTypeModal) {
+        questionTypeModal.style.display = "none";
+    }
+}
+
+modalButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const type = button.dataset.type;
+        questionTypeModal.style.display = "none";
+        const question = { type, question: '', answers: [] };
+        if (type === 'multiple') {
+            question.answers = ['', '', '', ''];
+        } else if (type === 'verdadero/falso') {
+            question.answers = ['', ''];
         }
+        questions.push(question);
+        renderQuestions();
+        renderPreview();
+    });
+});
 
-      function displayQuestion(questionIndex) {
-        const question = quizData.questions[questionIndex];
-        let questionHTML = `<div class="question">
-                            <p>Pregunta ${questionIndex + 1} (${question.type}): ${question.question}</p>`;
 
-        if (question.type === 'multiple') {
-            question.answers.forEach((answer, i) => {
-                const answerId = `q${questionIndex}-a${i}`;
-                questionHTML += `<div class="answer-option ${userAnswers[questionIndex] === i ? 'selected-answer' : ''}"
-                                    id="${answerId}"
-                                    onclick="selectAnswer(${questionIndex}, ${i})">
-                                    ${answer}
-                                </div>`;
-            });
-        } else if (question.type === 'verdadero/falso') {
-                questionHTML += `<div class="answer-option ${userAnswers[questionIndex] === 0 ? 'selected-answer' : ''}"
-                                  id="q${questionIndex}-a0"
-                                   onclick="selectAnswer(${questionIndex}, 0)">
-                                    Verdadero
-                                  </div>
-                                  <div class="answer-option ${userAnswers[questionIndex] === 1 ? 'selected-answer' : ''}"
-                                   id="q${questionIndex}-a1"
-                                    onclick="selectAnswer(${questionIndex}, 1)">
-                                    Falso
-                                   </div>`;
-        } else if (question.type === 'escribir') {
-          questionHTML += `<input type="text" id="q${questionIndex}-input" 
-                            placeholder="Escribe tu respuesta" 
-                            value="${userAnswers[questionIndex] || ''}"
-                            onchange="handleInputChange(${questionIndex}, this.value)">`;
+
+function renderQuestions() {
+    questionsDiv.innerHTML = questions.map((q, index) => `
+      <div class="question">
+        <p>Pregunta ${index + 1} (${q.type})</p>
+        <input type="text" placeholder="Escribe la pregunta aquí" value="${q.question}" onchange="updateQuestion(${index}, 'question', this.value)">
+        ${q.type === 'multiple' ? `
+          <input type="text" placeholder="Opción 1" value="${q.answers[0] || ''}" onchange="updateAnswer(${index}, 0, this.value)">
+          <input type="text" placeholder="Opción 2" value="${q.answers[1] || ''}" onchange="updateAnswer(${index}, 1, this.value)">
+          <input type="text" placeholder="Opción 3" value="${q.answers[2] || ''}" onchange="updateAnswer(${index}, 2, this.value)">
+          <input type="text" placeholder="Opción 4" value="${q.answers[3] || ''}" onchange="updateAnswer(${index}, 3, this.value)">
+        ` : ''}
+        ${q.type === 'verdadero/falso' ? `
+          <input type="text" placeholder="Verdadero" value="${q.answers[0] || ''}" onchange="updateAnswer(${index}, 0, this.value)">
+          <input type="text" placeholder="Falso" value="${q.answers[1] || ''}" onchange="updateAnswer(${index}, 1, this.value)">
+        ` : ''}
+        ${q.type === 'escribir' ? `
+          <input type="text" placeholder="Respuesta correcta" value="${q.answers[0] || ''}" onchange="updateAnswer(${index}, 0, this.value)">
+        ` : ''}
+      </div>
+    `).join('');
+}
+
+function updateQuestion(index, field, value) {
+    questions[index][field] = value;
+    renderPreview();
+}
+
+function updateAnswer(questionIndex, answerIndex, value) {
+    questions[questionIndex].answers[answerIndex] = value;
+    renderPreview();
+}
+
+function renderPreview() {
+    let previewHTML = questions.map(q => {
+        let answersDisplay = '';
+        if (q.type === 'multiple') {
+            answersDisplay = `<p>Opciones: ${q.answers.filter(a => a).join(', ')}</p>`;
+        } else if (q.type === 'verdadero/falso') {
+            answersDisplay = `<p>Opciones: Verdadero, Falso</p>`;
+        } else if (q.type === 'escribir') {
+            answersDisplay = `<p>Respuesta: ${q.answers.filter(a => a).join(', ')}</p>`;
         }
+        return `<div style="margin-bottom: 10px; border: 1px solid #00ffff; padding: 5px;">${q.question} ${answersDisplay}</div>`;
+    }).join('');
+    previewArea.innerHTML = previewHTML;
+}
 
-        questionHTML += `</div>`;
-        if (questionIndex < quizData.questions.length - 1){
-          questionHTML += `<button onclick="nextQuestion()" id="nextButton" disabled>Siguiente</button>`;
-        }
-        else{
-          questionHTML += `<button onclick="showResults()" id="nextButton" disabled>Ver Resultados</button>`;
-        }
+document.getElementById('generate').addEventListener('click', () => {
+    generateDynamicLink()
+        .then(link => {
+            quizLink.href = link;
+            quizLink.textContent = link;
+            alert(`Enlace generado. ¡Compártelo con tus estudiantes!`);
+        })
+        .catch(error => {
+            console.error("Error al generar el enlace dinámico:", error);
+            alert("Error al generar el enlace. Por favor, inténtalo de nuevo.");
+        });
+});
 
 
-        quizContentDiv.innerHTML = questionHTML;
+function generateDynamicLink() {
+  return new Promise((resolve, reject) => {
+    const base_url = "https://did-for-teachers.github.io/quiz"; // Tu dominio de GitHub Pages
+    const quiz_id = Math.random().toString(36).substring(2, 15);
+    const full_link = `${base_url}?id=${quiz_id}`;
 
-        // Si ya se respondió, habilitar el botón
-        if (userAnswers[questionIndex] !== undefined) {
-          document.getElementById("nextButton").disabled = false;
-        }
-      }
+    // Guarda el quiz en Firestore
+    db.collection('quizzes').doc(quiz_id).set({
+        questions: questions
+    }).then(() => {
+      console.log("Quiz guardado en Firestore con ID:", quiz_id);
 
-      function handleInputChange(questionIndex, value) {
-        userAnswers[questionIndex] = value;
-        document.getElementById("nextButton").disabled = false;
+        // Crea el enlace dinámico
+        dynamicLinks.createShortDynamicLink({
+            destination: full_link, //  La URL completa
+            domainUriPrefix: 'https://didforteachers.page.link',  //  Tu dominio de Dynamic Links
+            androidParameters: {
+              packageName: 'com.example.android',  //  Nombre de paquete de tu app Android (si tienes)
+            },
+            iosParameters: {
+              bundleId: 'com.example.ios',  //  Bundle ID de tu app iOS (si tienes)
+            },
+            socialMetaTagParameters: {
+                title: 'Quiz para Estudiantes',
+                description: 'haz este quizz',
+                imageUrl: 'https://www.example.com/quiz_image.jpg', //  Una imagen para compartir en redes sociales
+            },
+        }).then(shortLink => {
+            if (shortLink) {
+                console.log("Enlace dinámico corto generado:", shortLink.shortUrl);
+                resolve(shortLink.shortUrl);
+            } else {
+                reject("No se pudo generar el enlace corto.");
+            }
+        }).catch(error => {
+            console.error("Error al crear el enlace dinámico:", error);
+            reject(error);
+        });
+    }).catch(error => {
+        console.error("Error al guardar el quiz en Firestore:", error);
+        reject(error);
+    });
+  });
+}
+</script>
 
-      }
 
-      function selectAnswer(questionIndex, answerIndex) {
-          userAnswers[questionIndex] = answerIndex;
-          displayQuestion(questionIndex); // Volver a mostrar la pregunta para actualizar la selección
-          document.getElementById("nextButton").disabled = false; // Habilitar el botón Siguiente
-      }
-
-      function nextQuestion() {
-          if (currentQuestionIndex < quizData.questions.length - 1) {
-              currentQuestionIndex++;
-              displayQuestion(currentQuestionIndex);
-          }
-      }
-
-      function showResults() {
-          score = 0;
-          let resultsHTML = '<h2>Resultados</h2>';
-          quizData.questions.forEach((question, index) => {
-              resultsHTML += `<div class="question">
-                                  <p>Pregunta ${index + 1}: ${question.question}</p>`;
-              const userAnswer = userAnswers[index];
-              if (question.type === 'multiple' || question.type === 'verdadero/falso') {
-                const correctAnswerIndex = question.correctAnswer; // Suponemos que tienes esto en tus datos
-                if (userAnswer === correctAnswerIndex) {
-                    resultsHTML += `<p>Tu respuesta: <span class="correct-answer">${question.answers[userAnswer]}</span></p>`;
-                    resultsHTML += `<p>Respuesta Correcta: <span class="correct-answer">${question.answers[correctAnswerIndex]}</span></p>`;
-                    score++;
-                } else {
-                    resultsHTML += `<p>Tu respuesta: <span class="wrong-answer">${userAnswer !== undefined ? question.answers[userAnswer] : 'No respondido'}</span></p>`;
-                     resultsHTML += `<p>Respuesta Correcta: <span class="correct-answer">${question.answers[correctAnswerIndex]}</span></p>`;
-                }
-              }
-              else{
-                const correctAnswer = question.answers[0];
-                if (userAnswer.toLowerCase() === correctAnswer.toLowerCase())
-                {
-                  resultsHTML += `<p>Tu respuesta: <span class="correct-answer">${userAnswer}</span></p>`;
-                  resultsHTML += `<p>Respuesta Correcta: <span class="correct-answer">${correctAnswer}</span></p>`;
-                  score++;
-                }
-                else{
-                  resultsHTML += `<p>Tu respuesta: <span class="wrong-answer">${userAnswer || 'No respondido'}</span></p>`;
-                  resultsHTML += `<p>Respuesta Correcta: <span class="correct-answer">${correctAnswer}</span></p>`;
-                }
-              }
-
-              resultsHTML += `</div>`;
-          });
-          resultsHTML += `<p>Puntuación: ${score} / ${quizData.questions.length}</p>`;
-          quizContentDiv.innerHTML = resultsHTML;
-      }
-    </script>
 </body>
 </html>
 
