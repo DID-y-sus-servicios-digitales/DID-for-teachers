@@ -91,6 +91,17 @@ input[type="text"] {
   color: #fff;
   text-decoration: none;
 }
+
+#quizLink {
+    color: #0ff;
+    text-decoration: underline;
+}
+
+#quizLink:hover {
+    color: #ff0;
+    cursor: pointer;
+}
+
 </style>
 </head>
 <body>
@@ -102,6 +113,9 @@ input[type="text"] {
   <div class="preview">
     <h2>Vista Previa</h2>
     <div id="previewArea"></div>
+    <p>
+        Enlace para compartir: <a id="quizLink" href=""></a>
+    </p>
   </div>
   <button id="generate">Generar Enlace</button>
 
@@ -125,6 +139,7 @@ const newQuestionButton = document.getElementById('newQuestion');
 const questionTypeModal = document.getElementById('questionTypeModal');
 const modalClose = document.querySelector('.close');
 const modalButtons = document.querySelectorAll('.modal-content button');
+const quizLink = document.getElementById('quizLink');
 
 
 newQuestionButton.addEventListener('click', () => {
@@ -179,7 +194,7 @@ function renderQuestions() {
         ` : ''}
       </div>
     `).join('');
-  }
+}
 
 function updateQuestion(index, field, value) {
   questions[index][field] = value;
@@ -192,29 +207,36 @@ function updateAnswer(questionIndex, answerIndex, value) {
 }
 
 function renderPreview() {
-  previewArea.innerHTML = questions.map(q => {
-    let answersDisplay = '';
-    if (q.type === 'multiple') {
-      answersDisplay = `<p>Opciones: ${q.answers.filter(a => a).join(', ')}</p>`;
-    } else if (q.type === 'verdadero/falso') {
-      answersDisplay = `<p>Opciones: Verdadero, Falso</p>`;
-    }
-    else if (q.type === 'escribir') {
-      answersDisplay = `<p>Respuesta: ${q.answers.filter(a => a).join(', ')}</p>`;
-    }
-    return `<div style="margin-bottom: 10px; border: 1px solid #00ffff; padding: 5px;">${q.question} ${answersDisplay}</div>`;
-  }).join('');
+    let previewHTML = questions.map(q => {
+        let answersDisplay = '';
+        if (q.type === 'multiple') {
+            answersDisplay = `<p>Opciones: ${q.answers.filter(a => a).join(', ')}</p>`;
+        } else if (q.type === 'verdadero/falso') {
+            answersDisplay = `<p>Opciones: Verdadero, Falso</p>`;
+        } else if (q.type === 'escribir') {
+            answersDisplay = `<p>Respuesta: ${q.answers.filter(a => a).join(', ')}</p>`;
+        }
+        return `<div style="margin-bottom: 10px; border: 1px solid #00ffff; padding: 5px;">${q.question} ${answersDisplay}</div>`;
+    }).join('');
+    previewArea.innerHTML = previewHTML;
 }
 
 document.getElementById('generate').addEventListener('click', () => {
   const link = generateLink();
-  alert(`Enlace generado: ${link}`);
+  quizLink.href = link;
+  quizLink.textContent = link;
+  alert(`Enlace generado. ¡Compártelo con tus estudiantes!`);
 });
 
 function generateLink() {
-  // Aquí iría la lógica para generar un enlace único y guardarlo en un servidor
-  // Por simplicidad, aquí solo generamos un enlace de ejemplo
-  return 'https://ejemplo.com/quiz/' + Math.random().toString(36).substring(2, 15);
+    const base_url = "https://DID-for-teachers.github.io/quiz";
+    const quiz_id = Math.random().toString(36).substring(2, 15);
+    const full_link = `${base_url}?id=${quiz_id}`;
+
+    // TODO: Aquí DEBERÍAS guardar el 'quiz_id' y las 'questions' en una base de datos.
+    //       Por ahora, como es un ejemplo, NO guardamos nada.
+
+    return full_link;
 }
 </script>
 
