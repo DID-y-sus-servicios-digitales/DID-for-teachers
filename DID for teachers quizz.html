@@ -1,245 +1,220 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Creador de Quizzes</title>
-<style>
-body {
-  background-color: #121212;
-  color: #00ffff;
-  font-family: sans-serif;
-}
-
-.container {
-  width: 80%;
-  margin: auto;
-  padding: 20px;
-}
-
-.question {
-  border: 1px solid #00ffff;
-  padding: 10px;
-  margin-bottom: 10px;
-}
-
-.preview {
-  border: 1px solid #00ffff;
-  padding: 10px;
-  margin-top: 20px;
-}
-
-button {
-  background-color: #00ffff;
-  color: #121212;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  margin-right: 10px;
-}
-
-select {
-  background-color: #00ffff;
-  color: #121212;
-  border: none;
-  padding: 5px 10px;
-  margin-bottom: 10px;
-}
-
-input[type="text"] {
-  background-color: #1f1f1f;
-  color: #00ffff;
-  border: 1px solid #00ffff;
-  padding: 5px;
-  margin-bottom: 5px;
-  width: 100%;
-}
-
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0,0,0,0.4);
-}
-
-.modal-content {
-  background-color: #1f1f1f;
-  margin: 15% auto;
-  padding: 20px;
-  border: 1px solid #00ffff;
-  width: 50%;
-  text-align: center;
-}
-
-.modal-content button {
-  margin: 10px;
-}
-
-.close {
-  color: #00ffff;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.close:hover,
-.close:focus {
-  color: #fff;
-  text-decoration: none;
-}
-
-#quizLink {
-    color: #0ff;
-    text-decoration: underline;
-}
-
-#quizLink:hover {
-    color: #ff0;
-    cursor: pointer;
-}
-
-</style>
+    <title>Quiz Interactivo</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <style>
+      body {
+        background-color: #121212;
+        color: #00ffff;
+        font-family: sans-serif;
+      }
+      .container {
+        width: 80%;
+        margin: auto;
+        padding: 20px;
+      }
+      #quizContent {
+        border: 1px solid #00ffff;
+        padding: 20px;
+        margin-top: 20px;
+      }
+      .question {
+        margin-bottom: 20px;
+      }
+      .answer-option {
+        margin-bottom: 10px;
+        cursor: pointer;
+        color: #fff;
+      }
+      .answer-option:hover {
+        color: #0ff;
+      }
+      .selected-answer {
+        color: #0f0;
+        font-weight: bold;
+      }
+      .correct-answer {
+        color: #0f0;
+        font-weight: bold;
+      }
+      .wrong-answer {
+        color: #f00;
+        font-weight: bold;
+      }
+      button {
+        background-color: #00ffff;
+        color: #121212;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        margin-top: 20px;
+      }
+      button:disabled {
+        background-color: #404040;
+        color: #808080;
+        cursor: not-allowed;
+      }
+    </style>
 </head>
 <body>
-
-<div class="container">
-  <h1>Creador de Quizzes</h1>
-  <div id="questions"></div>
-  <button id="newQuestion">Nueva Pregunta</button>
-  <div class="preview">
-    <h2>Vista Previa</h2>
-    <div id="previewArea"></div>
-    <p>
-        Enlace para compartir: <a id="quizLink" href=""></a>
-    </p>
-  </div>
-  <button id="generate">Generar Enlace</button>
-
-  <div id="questionTypeModal" class="modal">
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <p>Seleccione el tipo de pregunta:</p>
-      <button data-type="multiple">Opción Múltiple</button>
-      <button data-type="verdadero/falso">Verdadero/Falso</button>
-      <button data-type="escribir">Escribir</button>
+    <div class="container">
+        <h1>Quiz</h1>
+        <div id="quizContent">
+            <p>Cargando quiz...</p>
+        </div>
     </div>
-  </div>
+    <script>
+        // Inicializa Firebase (reemplaza con tu configuración)
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
-</div>
+        // Obtiene el ID del quiz de la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const quizId = urlParams.get('id');
 
-<script>
-const questions = [];
-const questionsDiv = document.getElementById('questions');
-const previewArea = document.getElementById('previewArea');
-const newQuestionButton = document.getElementById('newQuestion');
-const questionTypeModal = document.getElementById('questionTypeModal');
-const modalClose = document.querySelector('.close');
-const modalButtons = document.querySelectorAll('.modal-content button');
-const quizLink = document.getElementById('quizLink');
-
-
-newQuestionButton.addEventListener('click', () => {
-  questionTypeModal.style.display = "block";
-});
-
-modalClose.onclick = function() {
-  questionTypeModal.style.display = "none";
-}
-
-window.onclick = function(event) {
-  if (event.target == questionTypeModal) {
-    questionTypeModal.style.display = "none";
-  }
-}
-
-modalButtons.forEach(button => {
-  button.addEventListener('click', () => {
-    const type = button.dataset.type;
-    questionTypeModal.style.display = "none";
-    const question = { type, question: '', answers: [] };
-    if (type === 'multiple') {
-      question.answers = ['', '', '', ''];
-    } else if (type === 'verdadero/falso') {
-      question.answers = ['', ''];
-    }
-    questions.push(question);
-    renderQuestions();
-    renderPreview();
-  });
-});
+        const quizContentDiv = document.getElementById('quizContent');
+        let quizData;
+        let userAnswers = {};
+        let score = 0;
+        let currentQuestionIndex = 0;
 
 
-
-function renderQuestions() {
-    questionsDiv.innerHTML = questions.map((q, index) => `
-      <div class="question">
-        <p>Pregunta ${index + 1} (${q.type})</p>
-        <input type="text" placeholder="Escribe la pregunta aquí" value="${q.question}" onchange="updateQuestion(${index}, 'question', this.value)">
-        ${q.type === 'multiple' ? `
-          <input type="text" placeholder="Opción 1" value="${q.answers[0] || ''}" onchange="updateAnswer(${index}, 0, this.value)">
-          <input type="text" placeholder="Opción 2" value="${q.answers[1] || ''}" onchange="updateAnswer(${index}, 1, this.value)">
-          <input type="text" placeholder="Opción 3" value="${q.answers[2] || ''}" onchange="updateAnswer(${index}, 2, this.value)">
-          <input type="text" placeholder="Opción 4" value="${q.answers[3] || ''}" onchange="updateAnswer(${index}, 3, this.value)">
-        ` : ''}
-        ${q.type === 'verdadero/falso' ? `
-          <input type="text" placeholder="Verdadero" value="${q.answers[0] || ''}" onchange="updateAnswer(${index}, 0, this.value)">
-          <input type="text" placeholder="Falso" value="${q.answers[1] || ''}" onchange="updateAnswer(${index}, 1, this.value)">
-        ` : ''}
-        ${q.type === 'escribir' ? `
-          <input type="text" placeholder="Respuesta correcta" value="${q.answers[0] || ''}" onchange="updateAnswer(${index}, 0, this.value)">
-        ` : ''}
-      </div>
-    `).join('');
-}
-
-function updateQuestion(index, field, value) {
-  questions[index][field] = value;
-  renderPreview();
-}
-
-function updateAnswer(questionIndex, answerIndex, value) {
-  questions[questionIndex].answers[answerIndex] = value;
-  renderPreview();
-}
-
-function renderPreview() {
-    let previewHTML = questions.map(q => {
-        let answersDisplay = '';
-        if (q.type === 'multiple') {
-            answersDisplay = `<p>Opciones: ${q.answers.filter(a => a).join(', ')}</p>`;
-        } else if (q.type === 'verdadero/falso') {
-            answersDisplay = `<p>Opciones: Verdadero, Falso</p>`;
-        } else if (q.type === 'escribir') {
-            answersDisplay = `<p>Respuesta: ${q.answers.filter(a => a).join(', ')}</p>`;
+        if (quizId) {
+            // Recupera el quiz de Firebase
+            db.collection('quizzes').doc(quizId).get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        quizData = doc.data();
+                        console.log("Datos del Quiz:", quizData);
+                        displayQuestion(currentQuestionIndex); // Mostrar la primera pregunta
+                    } else {
+                        quizContentDiv.innerHTML = '<p>Quiz no encontrado.</p>';
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error al obtener el quiz:", error);
+                    quizContentDiv.innerHTML = '<p>Error al cargar el quiz.</p>';
+                });
+        } else {
+            quizContentDiv.innerHTML = '<p>ID de quiz no proporcionado en la URL.</p>';
         }
-        return `<div style="margin-bottom: 10px; border: 1px solid #00ffff; padding: 5px;">${q.question} ${answersDisplay}</div>`;
-    }).join('');
-    previewArea.innerHTML = previewHTML;
-}
 
-document.getElementById('generate').addEventListener('click', () => {
-  const link = generateLink();
-  quizLink.href = link;
-  quizLink.textContent = link;
-  alert(`Enlace generado. ¡Compártelo con tus estudiantes!`);
-});
+      function displayQuestion(questionIndex) {
+        const question = quizData.questions[questionIndex];
+        let questionHTML = `<div class="question">
+                            <p>Pregunta ${questionIndex + 1} (${question.type}): ${question.question}</p>`;
 
-function generateLink() {
-    const base_url = "https://DID-for-teachers.github.io/quiz";
-    const quiz_id = Math.random().toString(36).substring(2, 15);
-    const full_link = `${base_url}?id=${quiz_id}`;
+        if (question.type === 'multiple') {
+            question.answers.forEach((answer, i) => {
+                const answerId = `q${questionIndex}-a${i}`;
+                questionHTML += `<div class="answer-option ${userAnswers[questionIndex] === i ? 'selected-answer' : ''}"
+                                    id="${answerId}"
+                                    onclick="selectAnswer(${questionIndex}, ${i})">
+                                    ${answer}
+                                </div>`;
+            });
+        } else if (question.type === 'verdadero/falso') {
+                questionHTML += `<div class="answer-option ${userAnswers[questionIndex] === 0 ? 'selected-answer' : ''}"
+                                  id="q${questionIndex}-a0"
+                                   onclick="selectAnswer(${questionIndex}, 0)">
+                                    Verdadero
+                                  </div>
+                                  <div class="answer-option ${userAnswers[questionIndex] === 1 ? 'selected-answer' : ''}"
+                                   id="q${questionIndex}-a1"
+                                    onclick="selectAnswer(${questionIndex}, 1)">
+                                    Falso
+                                   </div>`;
+        } else if (question.type === 'escribir') {
+          questionHTML += `<input type="text" id="q${questionIndex}-input" 
+                            placeholder="Escribe tu respuesta" 
+                            value="${userAnswers[questionIndex] || ''}"
+                            onchange="handleInputChange(${questionIndex}, this.value)">`;
+        }
 
-    // TODO: Aquí DEBERÍAS guardar el 'quiz_id' y las 'questions' en una base de datos.
-    //       Por ahora, como es un ejemplo, NO guardamos nada.
+        questionHTML += `</div>`;
+        if (questionIndex < quizData.questions.length - 1){
+          questionHTML += `<button onclick="nextQuestion()" id="nextButton" disabled>Siguiente</button>`;
+        }
+        else{
+          questionHTML += `<button onclick="showResults()" id="nextButton" disabled>Ver Resultados</button>`;
+        }
 
-    return full_link;
-}
-</script>
 
+        quizContentDiv.innerHTML = questionHTML;
+
+        // Si ya se respondió, habilitar el botón
+        if (userAnswers[questionIndex] !== undefined) {
+          document.getElementById("nextButton").disabled = false;
+        }
+      }
+
+      function handleInputChange(questionIndex, value) {
+        userAnswers[questionIndex] = value;
+        document.getElementById("nextButton").disabled = false;
+
+      }
+
+      function selectAnswer(questionIndex, answerIndex) {
+          userAnswers[questionIndex] = answerIndex;
+          displayQuestion(questionIndex); // Volver a mostrar la pregunta para actualizar la selección
+          document.getElementById("nextButton").disabled = false; // Habilitar el botón Siguiente
+      }
+
+      function nextQuestion() {
+          if (currentQuestionIndex < quizData.questions.length - 1) {
+              currentQuestionIndex++;
+              displayQuestion(currentQuestionIndex);
+          }
+      }
+
+      function showResults() {
+          score = 0;
+          let resultsHTML = '<h2>Resultados</h2>';
+          quizData.questions.forEach((question, index) => {
+              resultsHTML += `<div class="question">
+                                  <p>Pregunta ${index + 1}: ${question.question}</p>`;
+              const userAnswer = userAnswers[index];
+              if (question.type === 'multiple' || question.type === 'verdadero/falso') {
+                const correctAnswerIndex = question.correctAnswer; // Suponemos que tienes esto en tus datos
+                if (userAnswer === correctAnswerIndex) {
+                    resultsHTML += `<p>Tu respuesta: <span class="correct-answer">${question.answers[userAnswer]}</span></p>`;
+                    resultsHTML += `<p>Respuesta Correcta: <span class="correct-answer">${question.answers[correctAnswerIndex]}</span></p>`;
+                    score++;
+                } else {
+                    resultsHTML += `<p>Tu respuesta: <span class="wrong-answer">${userAnswer !== undefined ? question.answers[userAnswer] : 'No respondido'}</span></p>`;
+                     resultsHTML += `<p>Respuesta Correcta: <span class="correct-answer">${question.answers[correctAnswerIndex]}</span></p>`;
+                }
+              }
+              else{
+                const correctAnswer = question.answers[0];
+                if (userAnswer.toLowerCase() === correctAnswer.toLowerCase())
+                {
+                  resultsHTML += `<p>Tu respuesta: <span class="correct-answer">${userAnswer}</span></p>`;
+                  resultsHTML += `<p>Respuesta Correcta: <span class="correct-answer">${correctAnswer}</span></p>`;
+                  score++;
+                }
+                else{
+                  resultsHTML += `<p>Tu respuesta: <span class="wrong-answer">${userAnswer || 'No respondido'}</span></p>`;
+                  resultsHTML += `<p>Respuesta Correcta: <span class="correct-answer">${correctAnswer}</span></p>`;
+                }
+              }
+
+              resultsHTML += `</div>`;
+          });
+          resultsHTML += `<p>Puntuación: ${score} / ${quizData.questions.length}</p>`;
+          quizContentDiv.innerHTML = resultsHTML;
+      }
+    </script>
 </body>
 </html>
 
