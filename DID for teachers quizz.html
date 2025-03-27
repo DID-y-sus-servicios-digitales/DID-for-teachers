@@ -106,7 +106,7 @@ input[type="text"] {
 <body>
 
 <div class="container">
-    <h1>Creador de Quizzes</h1>
+    <h1>Quizz studio</h1>
     <div id="questions"></div>
     <button id="newQuestion">Nueva Pregunta</button>
     <div class="preview">
@@ -248,23 +248,23 @@ input[type="text"] {
     });
 
     function generateQuizAndLink() {
-      return new Promise((resolve, reject) => {
-          // 1. Guardar el quiz en Firestore
-          const quizId = Math.random().toString(36).substring(2, 15);
-          db.collection('quizzes').doc(quizId).set({
-              questions: questions
-          }).then(() => {
-              console.log("Quiz guardado en Firestore con ID:", quizId);
-              const baseUrl = "https://did-for-teachers.github.io/quiz.html";  // Asegúrate de que este archivo exista
-              const fullLink = `${baseUrl}?id=${quizId}`;
-              resolve(fullLink);
+        return new Promise((resolve, reject) => {
+            // 1. Guardar el quiz en Firestore
+            const quizId = Math.random().toString(36).substring(2, 15);
+            db.collection('quizzes').doc(quizId).set({
+                questions: questions
+            }).then(() => {
+                console.log("Quiz guardado en Firestore con ID:", quizId);
+                const baseUrl = "https://did-for-teachers.github.io/quiz.html";  // Asegúrate de que este archivo exista
+                const fullLink = `${baseUrl}?id=${quizId}`;
+                resolve(fullLink);
 
-          }).catch(error => {
-              console.error("Error al guardar el quiz en Firestore:", error);
-              reject(error);
-          });
-      });
-  }
+            }).catch(error => {
+                console.error("Error al guardar el quiz en Firestore:", error);
+                reject(error);
+            });
+        });
+    }
 </script>
 </body>
 </html>
