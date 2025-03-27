@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Creador de Quizzes</title>
+<style>
+body {
+  background-color: #121212;
+  color: #00ffff;
+  font-family: sans-serif;
+}
+
+.container {
+  width: 80%;
+  margin: auto;
+  padding: 20px;
+}
+
+.question {
+  border: 1px solid #00ffff;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.preview {
+  border: 1px solid #00ffff;
+  padding: 10px;
+  margin-top: 20px;
+}
+
+button {
+  background-color: #00ffff;
+  color: #121212;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+select {
+  background-color: #00ffff;
+  color: #121212;
+  border: none;
+  padding: 5px 10px;
+  margin-bottom: 10px;
+}
+
+input[type="text"] {
+  background-color: #1f1f1f;
+  color: #00ffff;
+  border: 1px solid #00ffff;
+  padding: 5px;
+  margin-bottom: 5px;
+  width: 100%;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+  background-color: #1f1f1f;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #00ffff;
+  width: 50%;
+  text-align: center;
+}
+
+.modal-content button {
+  margin: 10px;
+}
+
+.close {
+  color: #00ffff;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+  color: #fff;
+  text-decoration: none;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Creador de Quizzes</h1>
+  <div id="questions"></div>
+  <button id="newQuestion">Nueva Pregunta</button>
+  <div class="preview">
+    <h2>Vista Previa</h2>
+    <div id="previewArea"></div>
+  </div>
+  <button id="generate">Generar Enlace</button>
+
+  <div id="questionTypeModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <p>Seleccione el tipo de pregunta:</p>
+      <button data-type="multiple">Opción Múltiple</button>
+      <button data-type="verdadero/falso">Verdadero/Falso</button>
+      <button data-type="escribir">Escribir</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const questions = [];
+const questionsDiv = document.getElementById('questions');
+const previewArea = document.getElementById('previewArea');
+const newQuestionButton = document.getElementById('newQuestion');
+const questionTypeModal = document.getElementById('questionTypeModal');
+const modalClose = document.querySelector('.close');
+const modalButtons = document.querySelectorAll('.modal-content button');
+
+
+newQuestionButton.addEventListener('click', () => {
+  questionTypeModal.style.display = "block";
+});
+
+modalClose.onclick = function() {
+  questionTypeModal.style.display = "none";
+}
+
+window.onclick = function(event) {
+  if (event.target == questionTypeModal) {
+    questionTypeModal.style.display = "none";
+  }
+}
+
+modalButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    const type = button.dataset.type;
+    questionTypeModal.style.display = "none";
+    const question = { type, question: '', answers: [] };
+    if (type === 'multiple') {
+      question.answers = ['', '', '', ''];
+    } else if (type === 'verdadero/falso') {
+      question.answers = ['', ''];
+    }
+    questions.push(question);
+    renderQuestions();
+    renderPreview();
+  });
+});
+
+
+
+function renderQuestions() {
+    questionsDiv.innerHTML = questions.map((q, index) => `
+      <div class="question">
+        <p>Pregunta ${index + 1} (${q.type})</p>
+        <input type="text" placeholder="Escribe la pregunta aquí" value="${q.question}" onchange="updateQuestion(${index}, 'question', this.value)">
+        ${q.type === 'multiple' ? `
+          <input type="text" placeholder="Opción 1" value="${q.answers[0] || ''}" onchange="updateAnswer(${index}, 0, this.value)">
+          <input type="text" placeholder="Opción 2" value="${q.answers[1] || ''}" onchange="updateAnswer(${index}, 1, this.value)">
+          <input type="text" placeholder="Opción 3" value="${q.answers[2] || ''}" onchange="updateAnswer(${index}, 2, this.value)">
+          <input type="text" placeholder="Opción 4" value="${q.answers[3] || ''}" onchange="updateAnswer(${index}, 3, this.value)">
+        ` : ''}
+        ${q.type === 'verdadero/falso' ? `
+          <input type="text" placeholder="Verdadero" value="${q.answers[0] || ''}" onchange="updateAnswer(${index}, 0, this.value)">
+          <input type="text" placeholder="Falso" value="${q.answers[1] || ''}" onchange="updateAnswer(${index}, 1, this.value)">
+        ` : ''}
+        ${q.type === 'escribir' ? `
+          <input type="text" placeholder="Respuesta correcta" value="${q.answers[0] || ''}" onchange="updateAnswer(${index}, 0, this.value)">
+        ` : ''}
+      </div>
+    `).join('');
+  }
+
+function updateQuestion(index, field, value) {
+  questions[index][field] = value;
+  renderPreview();
+}
+
+function updateAnswer(questionIndex, answerIndex, value) {
+  questions[questionIndex].answers[answerIndex] = value;
+  renderPreview();
+}
+
+function renderPreview() {
+  previewArea.innerHTML = questions.map(q => {
+    let answersDisplay = '';
+    if (q.type === 'multiple') {
+      answersDisplay = `<p>Opciones: ${q.answers.filter(a => a).join(', ')}</p>`;
+    } else if (q.type === 'verdadero/falso') {
+      answersDisplay = `<p>Opciones: Verdadero, Falso</p>`;
+    }
+    else if (q.type === 'escribir') {
+      answersDisplay = `<p>Respuesta: ${q.answers.filter(a => a).join(', ')}</p>`;
+    }
+    return `<div style="margin-bottom: 10px; border: 1px solid #00ffff; padding: 5px;">${q.question} ${answersDisplay}</div>`;
+  }).join('');
+}
+
+document.getElementById('generate').addEventListener('click', () => {
+  const link = generateLink();
+  alert(`Enlace generado: ${link}`);
+});
+
+function generateLink() {
+  // Aquí iría la lógica para generar un enlace único y guardarlo en un servidor
+  // Por simplicidad, aquí solo generamos un enlace de ejemplo
+  return 'https://ejemplo.com/quiz/' + Math.random().toString(36).substring(2, 15);
+}
+</script>
+
+</body>
+</html>
+
