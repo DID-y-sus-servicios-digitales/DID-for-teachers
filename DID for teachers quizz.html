@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="icon" type="image/png" sizes="16x16"  href="st.png">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="theme-color" content="#121212">
+<title>Quizz studio beta</title>
+<style>
+body {
+    background-color: #121212;
+    color: #00ffff;
+    font-family: sans-serif;
+}
+
+.container {
+    width: 80%;
+    margin: auto;
+    padding: 20px;
+}
+
+.question {
+    border: 1px solid #00ffff;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.preview {
+    border: 1px solid #00ffff;
+    padding: 10px;
+    margin-top: 20px;
+}
+
+button {
+    background-color: #00ffff;
+    color: #121212;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+select {
+    background-color: #00ffff;
+    color: #121212;
+    border: none;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+}
+
+input[type="text"] {
+    background-color: #1f1f1f;
+    color: #00ffff;
+    border: 1px solid #00ffff;
+    padding: 5px;
+    margin-bottom: 5px;
+    width: 100%;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    background-color: #1f1f1f;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #00ffff;
+    width: 50%;
+    text-align: center;
+}
+
+.modal-content button {
+    margin: 10px;
+}
+
+.close {
+    color: #00ffff;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: #fff;
+    text-decoration: none;
+}
+
+#quizLink {
+    color: #0ff;
+    text-decoration: underline;
+}
+
+#quizLink:hover {
+    color: #ff0;
+    cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Quizz studio [beta]</h1>
+    <div id="questions"></div>
+    <button id="newQuestion">Nueva Pregunta</button>
+    <div class="preview">
+        <h2>Vista Previa</h2>
+        <div id="previewArea"></div>
+        <p>
+            Enlace para compartir: <a id="quizLink" href=""></a>
+        </p>
+    </div>
+    <button id="generate">Generar Enlace</button>
+
+    <div id="questionTypeModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>Seleccione el tipo de pregunta:</p>
+            <button data-type="multiple">Opción Múltiple</button>
+            <button data-type="verdadero/falso">Verdadero/Falso</button>
+            <button data-type="escribir">Escribir</button>
+        </div>
+    </div>
+
+</div>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+<script>
+    // Inicializa Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyDazGuaXHMpXo-5JDbYfQ8UVDxigrvGqA0",
+  authDomain: "quizz-creator-did.firebaseapp.com",
+  databaseURL: "https://quizz-creator-did-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "quizz-creator-did",
+  storageBucket: "quizz-creator-did.firebasestorage.app",
+  messagingSenderId: "837330124145",
+  appId: "1:837330124145:web:b2c71134e0440364f90ad0"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const questions = [];
+    const questionsDiv = document.getElementById('questions');
+    const previewArea = document.getElementById('previewArea');
+    const newQuestionButton = document.getElementById('newQuestion');
+    const questionTypeModal = document.getElementById('questionTypeModal');
+    const modalClose = document.querySelector('.close');
+    const modalButtons = document.querySelectorAll('.modal-content button');
+    const quizLink = document.getElementById('quizLink');
+
+
+    newQuestionButton.addEventListener('click', () => {
+        console.log("Botón 'Nueva Pregunta' clickeado"); // Para debugging
+        questionTypeModal.style.display = "block";
+    });
+
+    modalClose.onclick = function () {
+        questionTypeModal.style.display = "none";
+    }
+
+    window.onclick = function (event) {
+        if (event.target == questionTypeModal) {
+            questionTypeModal.style.display = "none";
+        }
+    }
+
+    modalButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            console.log("Botón de tipo de pregunta clickeado:", button.dataset.type); // Para debugging
+            const type = button.dataset.type;
+            questionTypeModal.style.display = "none";
+            const question = { type, question: '', answers: [] };
+            if (type === 'multiple') {
+                question.answers = ['', '', '', ''];
+            } else if (type === 'verdadero/falso') {
+                question.answers = ['', ''];
+            }
+            questions.push(question);
+            renderQuestions();
+            renderPreview();
+        });
+    });
+
+
+
+    function renderQuestions() {
+        questionsDiv.innerHTML = questions.map((q, index) => `
+      <div class="question">
+        <p>Pregunta ${index + 1} (${q.type})</p>
+        <input type="text" placeholder="Escribe la pregunta aquí" value="${q.question}" onchange="updateQuestion(${index}, 'question', this.value)">
+        ${q.type === 'multiple' ? `
+          <input type="text" placeholder="Opción 1" value="${q.answers[0] || ''}" onchange="updateAnswer(${index}, 0, this.value)">
+          <input type="text" placeholder="Opción 2" value="${q.answers[1] || ''}" onchange="updateAnswer(${index}, 1, this.value)">
+          <input type="text" placeholder="Opción 3" value="${q.answers[2] || ''}" onchange="updateAnswer(${index}, 2, this.value)">
+          <input type="text" placeholder="Opción 4" value="${q.answers[3] || ''}" onchange="updateAnswer(${index}, 3, this.value)">
+        ` : ''}
+        ${q.type === 'verdadero/falso' ? `
+          <input type="text" placeholder="Verdadero" value="${q.answers[0] || ''}" onchange="updateAnswer(${index}, 0, this.value)">
+          <input type="text" placeholder="Falso" value="${q.answers[1] || ''}" onchange="updateAnswer(${index}, 1, this.value)">
+        ` : ''}
+        ${q.type === 'escribir' ? `
+          <input type="text" placeholder="Respuesta correcta" value="${q.answers[0] || ''}" onchange="updateAnswer(${index}, 0, this.value)">
+        ` : ''}
+      </div>
+    `).join('');
+    }
+
+    function updateQuestion(index, field, value) {
+        questions[index][field] = value;
+        renderPreview();
+    }
+
+    function updateAnswer(questionIndex, answerIndex, value) {
+        questions[questionIndex].answers[answerIndex] = value;
+        renderPreview();
+    }
+
+    function renderPreview() {
+        let previewHTML = questions.map(q => {
+            let answersDisplay = '';
+            if (q.type === 'multiple') {
+                answersDisplay = `<p>Opciones: ${q.answers.filter(a => a).join(', ')}</p>`;
+            } else if (q.type === 'verdadero/falso') {
+                answersDisplay = `<p>Opciones: Verdadero, Falso</p>`;
+            } else if (q.type === 'escribir') {
+                answersDisplay = `<p>Respuesta: ${q.answers.filter(a => a).join(', ')}</p>`;
+            }
+            return `<div style="margin-bottom: 10px; border: 1px solid #00ffff; padding: 5px;">${q.question} ${answersDisplay}</div>`;
+        }).join('');
+        previewArea.innerHTML = previewHTML;
+    }
+
+    document.getElementById('generate').addEventListener('click', () => {
+        console.log("Botón 'Generar Enlace' clickeado"); // Para debugging
+        generateQuizAndLink()
+            .then(link => {
+                console.log("Enlace generado:", link); // Para debugging
+                quizLink.href = link;
+                quizLink.textContent = link;
+                alert(`Enlace generado. ¡Compártelo con tus estudiantes!`);
+            })
+            .catch(error => {
+                console.error("Error al generar el quiz y el enlace:", error);
+                alert("Error al generar el quiz y el enlace. Por favor, inténtalo de nuevo.");
+            });
+    });
+
+  function generateQuizAndLink() {
+    return new Promise((resolve, reject) => {
+        // 1. Guardar el quiz en Firestore
+        const quizId = Math.random().toString(36).substring(2, 15);
+        db.collection('quizzes').doc(quizId).set({
+            questions: questions
+        }).then(() => {
+            console.log("Quiz guardado en Firestore con ID:", quizId);
+            const baseUrl = "https://did-for-teachers.github.io/quiz.html";  // Asegúrate de que este archivo exista
+            const fullLink = `${baseUrl}?id=${quizId}`;
+            resolve(fullLink);
+
+        }).catch(error => {
+            console.error("Error al guardar el quiz en Firestore:", error);
+            reject(error);
+        });
+    });
+}
+</script>
+</body>
+</html>
+
