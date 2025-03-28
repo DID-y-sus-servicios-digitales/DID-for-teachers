@@ -135,144 +135,247 @@ input[type="text"] {
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 <script>
-    // Inicializa Firebase
-    const firebaseConfig = {
-        apiKey: "AIzaSyDazGuaXHMpXo-5JDbYfQ8UVDxigrvGqA0",
-  authDomain: "quizz-creator-did.firebaseapp.com",
-  databaseURL: "https://quizz-creator-did-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "quizz-creator-did",
-  storageBucket: "quizz-creator-did.firebasestorage.app",
-  messagingSenderId: "837330124145",
-  appId: "1:837330124145:web:b2c71134e0440364f90ad0"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+    const preguntas = JSON.parse(localStorage.getItem("preguntas")) || [];
+    const MAX_PREGUNTAS = 16;
+    const UN_MES = 30 * 24 * 60 * 60 * 1000;
 
-    const questions = [];
-    const questionsDiv = document.getElementById('questions');
-    const previewArea = document.getElementById('previewArea');
-    const newQuestionButton = document.getElementById('newQuestion');
-    const questionTypeModal = document.getElementById('questionTypeModal');
-    const modalClose = document.querySelector('.close');
-    const modalButtons = document.querySelectorAll('.modal-content button');
-    const quizLink = document.getElementById('quizLink');
+    const preguntaElemento = document.getElementById("pregunta");
+    const opcionesElemento = document.getElementById("opciones");
+    const respuestaEscritaInput = document.getElementById("respuesta-escrita");
+    const siguienteBtn = document.getElementById("siguiente-btn");
+    const resultadosElemento = document.getElementById("resultados");
+    const puntuacionElemento = document.getElementById("puntuacion");
+    const crearQuiz = document.getElementById("crear-quiz");
+    const realizarQuiz = document.getElementById("realizar-quiz");
+    const tipoPreguntaSelect = document.getElementById("tipo-pregunta");
+    const opcion1Input = document.getElementById("opcion1");
+    const opcion2Input = document.getElementById("opcion2");
+    const opcion3Input = document.getElementById("opcion3");
+    const opcion4Input = document.getElementById("opcion4");
+    const agregarPreguntaBtn = document.getElementById("agregar-pregunta-btn");
+    const generarEnlaceBtn = document.getElementById("generar-enlace-btn");
+    const enlaceModal = document.getElementById("enlace-modal");
+    const enlaceInput = document.getElementById("enlace-input");
+    const copiarEnlaceBtn = document.getElementById("copiar-enlace-btn");
+    const cerrarModalBtn = document.querySelector(".cerrar-modal-btn");
 
 
-    newQuestionButton.addEventListener('click', () => {
-        console.log("Botón 'Nueva Pregunta' clickeado"); // Para debugging
-        questionTypeModal.style.display = "block";
-    });
+    let preguntaActual = 0;
+    let puntuacion = 0;
+    let quizId = localStorage.getItem("quizId") || generateQuizId();
 
-    modalClose.onclick = function () {
-        questionTypeModal.style.display = "none";
+    function generateQuizId() {
+        const id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        localStorage.setItem("quizId", id);
+        return id;
     }
 
-    window.onclick = function (event) {
-        if (event.target == questionTypeModal) {
-            questionTypeModal.style.display = "none";
+    function cargarPregunta() {
+        if (!preguntas || preguntas.length === 0) {
+            preguntaElemento.textContent = "No hay preguntas disponibles. Por favor, crea un quiz.";
+            opcionesElemento.innerHTML = "";
+            siguienteBtn.classList.add("oculto");
+            return;
+        }
+
+        const pregunta = preguntas[preguntaActual];
+        preguntaElemento.textContent = pregunta.pregunta;
+        opcionesElemento.innerHTML = "";
+        respuestaEscritaInput.classList.add("oculto");
+
+        if (pregunta.tipo === "multiple" || pregunta.tipo === "verdadero-falso") {
+            pregunta.opciones.forEach(opcion => {
+                const li = document.createElement("li");
+                li.textContent = opcion;
+                li.addEventListener("click", () => seleccionarRespuesta(opcion));
+                opcionesElemento.appendChild(li);
+            });
+        } else if (pregunta.tipo === "escrita") {
+            respuestaEscritaInput.classList.remove("oculto");
+        }
+
+        siguienteBtn.classList.remove("oculto");
+    }
+
+    function seleccionarRespuesta(respuesta) {
+        const pregunta = preguntas[preguntaActual];
+        let respuestaUsuario;
+
+        if (pregunta.tipo === "multiple" || pregunta.tipo === "verdadero-falso") {
+            respuestaUsuario = respuesta;
+        } else if (pregunta.tipo === "escrita") {
+            respuestaUsuario = respuestaEscritaInput.value.trim();
+        }
+
+        if (respuestaUsuario.toLowerCase() === pregunta.respuestaCorrecta.toLowerCase()) {
+            puntuacion++;
+        }
+
+        if (preguntaActual < preguntas.length - 1) {
+            preguntaActual++;
+            cargarPregunta();
+        } else {
+            mostrarResultados();
         }
     }
 
-    modalButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            console.log("Botón de tipo de pregunta clickeado:", button.dataset.type); // Para debugging
-            const type = button.dataset.type;
-            questionTypeModal.style.display = "none";
-            const question = { type, question: '', answers: [] };
-            if (type === 'multiple') {
-                question.answers = ['', '', '', ''];
-            } else if (type === 'verdadero/falso') {
-                question.answers = ['', ''];
+    function mostrarResultados() {
+        preguntaElemento.classList.add("oculto");
+        opcionesElemento.classList.add("oculto");
+        respuestaEscritaInput.classList.add("oculto");
+        siguienteBtn.classList.add("oculto");
+        resultadosElemento.classList.remove("oculto");
+        puntuacionElemento.textContent = `Tu puntuación es: ${puntuacion}/${preguntas.length}`;
+        realizarQuiz.style.display = "block";
+    }
+
+    siguienteBtn.addEventListener("click", () => {
+        if (preguntas && preguntas.length > 0) {
+            if (preguntaActual === 0) {
+                cargarPregunta();
             }
-            questions.push(question);
-            renderQuestions();
-            renderPreview();
-        });
+        }
     });
 
 
+    tipoPreguntaSelect.addEventListener("change", () => {
+        const tipo = tipoPreguntaSelect.value;
+        opcion1Input.placeholder = tipo === "escrita" ? "Respuesta" : "Opción 1";
+        opcion2Input.placeholder = tipo === "escrita" ? "" : "Opción 2";
+        opcion3Input.placeholder = tipo === "escrita" ? "" : "Opción 3";
+        opcion4Input.placeholder = tipo === "escrita" ? "" : "Opción 4";
 
-    function renderQuestions() {
-        questionsDiv.innerHTML = questions.map((q, index) => `
-      <div class="question">
-        <p>Pregunta ${index + 1} (${q.type})</p>
-        <input type="text" placeholder="Escribe la pregunta aquí" value="${q.question}" onchange="updateQuestion(${index}, 'question', this.value)">
-        ${q.type === 'multiple' ? `
-          <input type="text" placeholder="Opción 1" value="${q.answers[0] || ''}" onchange="updateAnswer(${index}, 0, this.value)">
-          <input type="text" placeholder="Opción 2" value="${q.answers[1] || ''}" onchange="updateAnswer(${index}, 1, this.value)">
-          <input type="text" placeholder="Opción 3" value="${q.answers[2] || ''}" onchange="updateAnswer(${index}, 2, this.value)">
-          <input type="text" placeholder="Opción 4" value="${q.answers[3] || ''}" onchange="updateAnswer(${index}, 3, this.value)">
-        ` : ''}
-        ${q.type === 'verdadero/falso' ? `
-          <input type="text" placeholder="Verdadero" value="${q.answers[0] || ''}" onchange="updateAnswer(${index}, 0, this.value)">
-          <input type="text" placeholder="Falso" value="${q.answers[1] || ''}" onchange="updateAnswer(${index}, 1, this.value)">
-        ` : ''}
-        ${q.type === 'escribir' ? `
-          <input type="text" placeholder="Respuesta correcta" value="${q.answers[0] || ''}" onchange="updateAnswer(${index}, 0, this.value)">
-        ` : ''}
-      </div>
-    `).join('');
-    }
+        opcion2Input.style.display = tipo === "escrita" ? "none" : "block";
+        opcion3Input.style.display = tipo === "escrita" ? "none" : "block";
+        opcion4Input.style.display = tipo === "escrita" ? "none" : "block";
+    });
 
-    function updateQuestion(index, field, value) {
-        questions[index][field] = value;
-        renderPreview();
-    }
+    agregarPreguntaBtn.addEventListener("click", () => {
+        const tipoPregunta = tipoPreguntaSelect.value;
+        const nuevaPregunta = document.getElementById("nueva-pregunta").value.trim();
+        const opcion1 = opcion1Input.value.trim();
+        const opcion2 = opcion2Input.value.trim();
+        const opcion3 = opcion3Input.value.trim();
+        const opcion4 = opcion4Input.value.trim();
+        const respuestaCorrecta = document.getElementById("respuesta-correcta").value.trim();
 
-    function updateAnswer(questionIndex, answerIndex, value) {
-        questions[questionIndex].answers[answerIndex] = value;
-        renderPreview();
-    }
-
-    function renderPreview() {
-        let previewHTML = questions.map(q => {
-            let answersDisplay = '';
-            if (q.type === 'multiple') {
-                answersDisplay = `<p>Opciones: ${q.answers.filter(a => a).join(', ')}</p>`;
-            } else if (q.type === 'verdadero/falso') {
-                answersDisplay = `<p>Opciones: Verdadero, Falso</p>`;
-            } else if (q.type === 'escribir') {
-                answersDisplay = `<p>Respuesta: ${q.answers.filter(a => a).join(', ')}</p>`;
+        if (preguntas.length < MAX_PREGUNTAS) {
+            let opciones = [];
+            if (tipoPregunta === "multiple" || tipoPregunta === "verdadero-falso") {
+                if (!opcion1 || !opcion2 || !respuestaCorrecta) {
+                    alert("Por favor, ingrese las opciones y la respuesta correcta")
+                    return;
+                }
+                opciones = [opcion1, opcion2, opcion3, opcion4].filter(Boolean);
+                if (tipoPregunta === "verdadero-falso") {
+                    opciones = ["Verdadero", "Falso"];
+                }
+            } else if (tipoPregunta === "escrita") {
+                if (!nuevaPregunta || !respuestaCorrecta) {
+                    alert("Por favor, ingrese la pregunta y la respuesta correcta.");
+                    return;
+                }
+            } else {
+                if (!nuevaPregunta || !respuestaCorrecta || !opcion1 || !opcion2) {
+                    alert("Por favor, ingrese la pregunta y al menos dos opciones y la respuesta correcta.");
+                    return;
+                }
+                opciones = [opcion1, opcion2, opcion3, opcion4].filter(Boolean);
             }
-            return `<div style="margin-bottom: 10px; border: 1px solid #00ffff; padding: 5px;">${q.question} ${answersDisplay}</div>`;
-        }).join('');
-        previewArea.innerHTML = previewHTML;
-    }
 
-    document.getElementById('generate').addEventListener('click', () => {
-        console.log("Botón 'Generar Enlace' clickeado"); // Para debugging
-        generateQuizAndLink()
-            .then(link => {
-                console.log("Enlace generado:", link); // Para debugging
-                quizLink.href = link;
-                quizLink.textContent = link;
-                alert(`Enlace generado. ¡Compártelo con tus estudiantes!`);
-            })
-            .catch(error => {
-                console.error("Error al generar el quiz y el enlace:", error);
-                alert("Error al generar el quiz y el enlace. Por favor, inténtalo de nuevo.");
+            preguntas.push({
+                tipo: tipoPregunta,
+                pregunta: nuevaPregunta,
+                opciones: opciones,
+                respuestaCorrecta: respuestaCorrecta,
+                timestamp: Date.now()
             });
+
+            localStorage.setItem("preguntas", JSON.stringify(preguntas));
+            alert("Pregunta agregada correctamente");
+            limpiarFormulario();
+
+        } else {
+            alert("Se ha alcanzado el máximo de 16 preguntas.");
+        }
     });
 
-  function generateQuizAndLink() {
-    return new Promise((resolve, reject) => {
-        // 1. Guardar el quiz en Firestore
-        const quizId = Math.random().toString(36).substring(2, 15);
-        db.collection('quizzes').doc(quizId).set({
-            questions: questions
-        }).then(() => {
-            console.log("Quiz guardado en Firestore con ID:", quizId);
-            const baseUrl = "https://did-for-teachers.github.io/quiz.html";  // Asegúrate de que este archivo exista
-            const fullLink = `${baseUrl}?id=${quizId}`;
-            resolve(fullLink);
+    function limpiarFormulario() {
+        document.getElementById("nueva-pregunta").value = "";
+        opcion1Input.value = "";
+        opcion2Input.value = "";
+        opcion3Input.value = "";
+        opcion4Input.value = "";
+        document.getElementById("respuesta-correcta").value = "";
+        tipoPreguntaSelect.value = "multiple";
 
-        }).catch(error => {
-            console.error("Error al guardar el quiz en Firestore:", error);
-            reject(error);
-        });
+        opcion2Input.style.display = "block";
+        opcion3Input.style.display = "block";
+        opcion4Input.style.display = "block";
+    }
+
+    generarEnlaceBtn.addEventListener("click", () => {
+        if (preguntas.length > 0) {
+            const quizURL = `${window.location.origin}${window.location.pathname}?quizId=${quizId}`;
+            enlaceInput.value = quizURL;
+            enlaceModal.style.display = "block";
+
+        } else {
+            alert("Por favor, agrega preguntas antes de generar un enlace.");
+        }
     });
-}
+
+    cerrarModalBtn.addEventListener("click", () => {
+        enlaceModal.style.display = "none";
+    });
+
+    copiarEnlaceBtn.addEventListener("click", () => {
+        enlaceInput.select();
+        enlaceInput.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(enlaceInput.value);
+        alert("Enlace copiado al portapapeles");
+        enlaceModal.style.display = "none";
+    });
+
+    function getQuizIdFromURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get("quizId");
+    }
+
+    const urlQuizId = getQuizIdFromURL();
+    if (urlQuizId) {
+        const savedQuizIdData = localStorage.getItem("quizIdData");
+        let quizIdData = savedQuizIdData ? JSON.parse(savedQuizIdData) : {};
+
+        if (quizIdData[urlQuizId]) {
+            const tiempoCreacion = quizIdData[urlQuizId].timestamp;
+            const tiempoExpiracion = tiempoCreacion + UN_MES;
+
+            if (Date.now() > tiempoExpiracion) {
+                alert("Este enlace ha caducado.");
+                localStorage.removeItem("quizIdData");
+                localStorage.removeItem("preguntas");
+                crearQuiz.style.display = "block";
+                realizarQuiz.style.display = "none";
+            } else {
+                crearQuiz.style.display = "none";
+                realizarQuiz.style.display = "block";
+                preguntas = preguntas.filter(pregunta => pregunta.timestamp <= tiempoExpiracion);
+                localStorage.setItem("preguntas", JSON.stringify(preguntas));
+                cargarPregunta();
+            }
+        } else {
+            alert("Este enlace no es válido o el quiz ya no está disponible.");
+            crearQuiz.style.display = "block";
+            realizarQuiz.style.display = "none";
+        }
+    } else {
+        crearQuiz.style.display = "block";
+        realizarQuiz.style.display = "none";
+    }
 </script>
+
+
 </body>
 </html>
 
