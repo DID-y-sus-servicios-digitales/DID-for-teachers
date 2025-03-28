@@ -1,10 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="icon" type="image/png" sizes="16x16"  href="st.png">
-<meta name="msapplication-TileColor" content="#ffffff">
-<meta name="theme-color" content="#ffffff">
-<title>Quizz studio [beta]</title>
+<title>Quizz studio beta</title>
 <style>
 body {
     background-color: #121212;
@@ -109,7 +106,7 @@ input[type="text"] {
 <body>
 
 <div class="container">
-    <h1>Quizz studio</h1>
+    <h1>Quizz studio [beta]</h1>
     <div id="questions"></div>
     <button id="newQuestion">Nueva Pregunta</button>
     <div class="preview">
@@ -126,7 +123,7 @@ input[type="text"] {
             <span class="close">&times;</span>
             <p>Seleccione el tipo de pregunta:</p>
             <button data-type="multiple">Opción Múltiple</button>
-            <button data-type="verdadero/falso">Verdadero o Falso</button>
+            <button data-type="verdadero/falso">Verdadero/Falso</button>
             <button data-type="escribir">Escribir</button>
         </div>
     </div>
@@ -135,15 +132,15 @@ input[type="text"] {
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 <script>
-    // Inicializa Firebase (Reemplaza con tu configuración)
+    // Inicializa Firebase
     const firebaseConfig = {
-        apiKey: "AIzaSyDazGuaXHMpXo-5JDbYfQ8UVDxigrvGqA0",
-  authDomain: "quizz-creator-did.firebaseapp.com",
-  databaseURL: "https://quizz-creator-did-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "quizz-creator-did",
-  storageBucket: "quizz-creator-did.firebasestorage.app",
-  messagingSenderId: "837330124145",
-  appId: "1:837330124145:web:b2c71134e0440364f90ad0
+        apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID",
+    measurementId: "YOUR_MEASUREMENT_ID"
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
@@ -159,6 +156,7 @@ input[type="text"] {
 
 
     newQuestionButton.addEventListener('click', () => {
+        console.log("Botón 'Nueva Pregunta' clickeado"); // Para debugging
         questionTypeModal.style.display = "block";
     });
 
@@ -174,6 +172,7 @@ input[type="text"] {
 
     modalButtons.forEach(button => {
         button.addEventListener('click', () => {
+            console.log("Botón de tipo de pregunta clickeado:", button.dataset.type); // Para debugging
             const type = button.dataset.type;
             questionTypeModal.style.display = "none";
             const question = { type, question: '', answers: [] };
@@ -238,8 +237,10 @@ input[type="text"] {
     }
 
     document.getElementById('generate').addEventListener('click', () => {
+        console.log("Botón 'Generar Enlace' clickeado"); // Para debugging
         generateQuizAndLink()
             .then(link => {
+                console.log("Enlace generado:", link); // Para debugging
                 quizLink.href = link;
                 quizLink.textContent = link;
                 alert(`Enlace generado. ¡Compártelo con tus estudiantes!`);
@@ -250,24 +251,24 @@ input[type="text"] {
             });
     });
 
-    function generateQuizAndLink() {
-        return new Promise((resolve, reject) => {
-            // 1. Guardar el quiz en Firestore
-            const quizId = Math.random().toString(36).substring(2, 15);
-            db.collection('quizzes').doc(quizId).set({
-                questions: questions
-            }).then(() => {
-                console.log("Quiz guardado en Firestore con ID:", quizId);
-                const baseUrl = "https://did-for-teachers.github.io/quiz.html";  // Asegúrate de que este archivo exista
-                const fullLink = `${baseUrl}?id=${quizId}`;
-                resolve(fullLink);
+  function generateQuizAndLink() {
+    return new Promise((resolve, reject) => {
+        // 1. Guardar el quiz en Firestore
+        const quizId = Math.random().toString(36).substring(2, 15);
+        db.collection('quizzes').doc(quizId).set({
+            questions: questions
+        }).then(() => {
+            console.log("Quiz guardado en Firestore con ID:", quizId);
+            const baseUrl = "https://did-for-teachers.github.io/quiz.html";  // Asegúrate de que este archivo exista
+            const fullLink = `${baseUrl}?id=${quizId}`;
+            resolve(fullLink);
 
-            }).catch(error => {
-                console.error("Error al guardar el quiz en Firestore:", error);
-                reject(error);
-            });
+        }).catch(error => {
+            console.error("Error al guardar el quiz en Firestore:", error);
+            reject(error);
         });
-    }
+    });
+}
 </script>
 </body>
 </html>
