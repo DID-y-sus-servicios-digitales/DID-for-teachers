@@ -1,17 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<link rel="icon" type="image/png" sizes="16x16"  href="st.png">
+    <link rel="icon" type="image/png" sizes="16x16"  href="st.png">
 <meta name="msapplication-TileColor" content="#ffffff">
 <meta name="theme-color" content="#121212">
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quizz studio</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
-            background: linear-gradient(to bottom, #FF6B81, #00CED1);
+            background-color: #080808;
             color: #FFFFFF;
             font-family: 'Inter', sans-serif;
             display: flex;
@@ -24,7 +23,7 @@
         }
 
         .quiz-container {
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.8);
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
@@ -61,7 +60,7 @@
         }
 
         #opciones li {
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgba(255, 255, 255, 0.1);
             padding: 15px;
             border-radius: 5px;
             cursor: pointer;
@@ -76,12 +75,12 @@
         }
 
         #opciones li:hover {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.2);
             color: #FFFFFF;
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
         }
 
-        #siguiente-btn, #agregar-pregunta-btn, #generar-enlace-btn {
+        #siguiente-btn, #agregar-pregunta-btn, #generar-enlace-btn, #nueva-pregunta-btn {
             background: linear-gradient(to right, #FF6B81, #00CED1);
             color: #FFFFFF;
             padding: 10px 20px;
@@ -98,7 +97,7 @@
             border-image-slice: 1;
         }
 
-        #siguiente-btn:hover, #agregar-pregunta-btn:hover, #generar-enlace-btn:hover {
+        #siguiente-btn:hover, #agregar-pregunta-btn:hover, #generar-enlace-btn:hover, #nueva-pregunta-btn:hover {
             background: linear-gradient(to right, #FF4500, #008B8B);
             color: #FFFFFF;
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
@@ -121,7 +120,7 @@
             width: calc(100% - 20px);
             padding: 10px;
             margin: 0.5em 0;
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgba(255, 255, 255, 0.1);
             color: #FFFFFF;
             border: 2px solid;
             border-image: linear-gradient(to right, #FF6B81, #00CED1);
@@ -173,7 +172,7 @@
             margin: 10% auto;
             padding: 20px;
             border-radius: 10px;
-            border: 2px solid;
+             border: 2px solid;
             border-image: linear-gradient(to right, #FF6B81, #00CED1);
             border-image-slice: 1;
             width: 80%;
@@ -194,7 +193,7 @@
             width: calc(100% - 130px);
             padding: 10px;
             margin: 0.5em 0;
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgba(255, 255, 255, 0.1);
             color: #FFFFFF;
             border: 2px solid;
             border-image: linear-gradient(to right, #FF6B81, #00CED1);
@@ -225,7 +224,7 @@
             font-family: 'Inter', sans-serif;
             text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
             display: inline-block;
-            border: 2px solid;
+             border: 2px solid;
             border-image: linear-gradient(to right, #FF6B81, #00CED1);
             border-image-slice: 1;
         }
@@ -269,7 +268,7 @@
                 font-size: 1rem;
                 padding: 8px;
             }
-            #siguiente-btn, #agregar-pregunta-btn, #generar-enlace-btn{
+            #siguiente-btn, #agregar-pregunta-btn, #generar-enlace-btn, #nueva-pregunta-btn {
                 font-size: 1rem;
                 padding: 10px 15px;
             }
@@ -289,20 +288,23 @@
 </head>
 <body>
     <div class="quiz-container" id="crear-quiz">
-        <h1>Quizz studio [beta]</h1>
+        <h1>Quizz studio</h1>
         <input type="hidden" id="profesor-id" value="profesor3">
-        <select id="tipo-pregunta">
-            <option value="multiple">Opción Múltiple</option>
-            <option value="verdadero-falso">Verdadero o Falso</option>
-            <option value="escrita">Escrita</option>
-        </select>
-        <textarea id="nueva-pregunta" placeholder="Pregunta"></textarea>
-        <input type="text" id="opcion1" placeholder="Opción 1">
-        <input type="text" id="opcion2" placeholder="Opción 2">
-        <input type="text" id="opcion3" placeholder="Opción 3">
-        <input type="text" id="opcion4" placeholder="Opción 4">
-        <input type="text" id="respuesta-correcta" placeholder="Respuesta Correcta">
-        <button id="agregar-pregunta-btn">Agregar Pregunta</button>
+        <button id="nueva-pregunta-btn">Nueva Pregunta</button>
+        <div id="pregunta-inputs" class="oculto">
+            <select id="tipo-pregunta">
+                <option value="multiple">Opción Múltiple</option>
+                <option value="verdadero-falso">Verdadero o Falso</option>
+                <option value="escrita">Escrita</option>
+            </select>
+            <textarea id="nueva-pregunta" placeholder="Pregunta"></textarea>
+            <input type="text" id="opcion1" placeholder="Opción 1">
+            <input type="text" id="opcion2" placeholder="Opción 2">
+            <input type="text" id="opcion3" placeholder="Opción 3">
+            <input type="text" id="opcion4" placeholder="Opción 4">
+            <input type="text" id="respuesta-correcta" placeholder="Respuesta Correcta">
+            <button id="agregar-pregunta-btn">Agregar Pregunta</button>
+        </div>
         <button id="generar-enlace-btn">Generar Enlace</button>
     </div>
     <div class="quiz-container" id="realizar-quiz">
@@ -331,7 +333,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
     <script>
-        // Tu código de inicialización de Firebase aquí
+       // Tu código de inicialización de Firebase aquí
         const firebaseConfig = {
             apiKey: "AIzaSyDazGuaXHMpXo-5JDbYfQ8UVDxigrvGqA0",
   authDomain: "quizz-creator-did.firebaseapp.com",
@@ -371,11 +373,15 @@
         const enlaceInput = document.getElementById("enlace-input");
         const copiarEnlaceBtn = document.getElementById("copiar-enlace-btn");
         const cerrarModalBtn = document.querySelector(".cerrar-modal-btn");
+        const nuevaPreguntaBtn = document.getElementById("nueva-pregunta-btn");
+        const preguntaInputsDiv = document.getElementById("pregunta-inputs");
 
 
         let preguntaActual = 0;
         let puntuacion = 0;
         let quizId = localStorage.getItem("quizId") || generateQuizId();
+        let profesorId = document.getElementById("profesor-id").value;
+
 
         function generateQuizId() {
             const id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -460,7 +466,6 @@
 
             opcion2Input.style.display = tipo === "escrita" ? "none" : "block";
             opcion3Input.style.display = tipo === "escrita" ? "none" : "block";
-            opcion4Input.style.display = tipo === "escrita" ? "none" : "block";
         });
 
         agregarPreguntaBtn.addEventListener("click", () => {
@@ -507,9 +512,9 @@
                 localStorage.setItem("preguntas", JSON.stringify(preguntas));
                 alert("Pregunta agregada correctamente");
                 limpiarFormulario();
+                preguntaInputsDiv.classList.add("oculto");
 
                  // Guardar en Firebase
-                 const profesorId = document.getElementById("profesor-id").value;
                  const quizData = {
                     preguntas: preguntas,
                     profesorId: profesorId,
@@ -538,7 +543,6 @@
 
         generarEnlaceBtn.addEventListener("click", () => {
             if (preguntas.length > 0) {
-                const profesorId = document.getElementById("profesor-id").value;
                 const quizURL = `${window.location.origin}${window.location.pathname}?quizId=${quizId}&profesorId=${profesorId}`;
                 enlaceInput.value = quizURL;
                 enlaceModal.style.display = "block";
@@ -555,15 +559,5 @@
             enlaceModal.style.display = "none";
         });
 
-        copiarEnlaceBtn.addEventListener("click", () => {
-            enlaceInput.select();
-            enlaceInput.setSelectionRange(0, 99999);
-            navigator.clipboard.writeText(enlaceInput.value);
-            alert("Enlace copiado al portapapeles");
-            enlaceModal.style.display = "none";
-        });
-
-        function getQuizIdFromURL() {
-            const urlParams = new URLSearchParams(window.location.search);
-            return {
+        copiarEnlaceBtn.addEventListener("click", ()
 
