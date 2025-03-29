@@ -80,7 +80,7 @@
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
         }
 
-        #siguiente-btn, #agregar-pregunta-btn, #generar-enlace-btn, #nueva-pregunta-btn {
+        #siguiente-btn, #agregar-pregunta-btn, #generar-enlace-btn {
             background: linear-gradient(to right, #FF6B81, #00CED1);
             color: #FFFFFF;
             padding: 10px 20px;
@@ -97,7 +97,7 @@
             border-image-slice: 1;
         }
 
-        #siguiente-btn:hover, #agregar-pregunta-btn:hover, #generar-enlace-btn:hover, #nueva-pregunta-btn:hover {
+        #siguiente-btn:hover, #agregar-pregunta-btn:hover, #generar-enlace-btn:hover {
             background: linear-gradient(to right, #FF4500, #008B8B);
             color: #FFFFFF;
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
@@ -202,7 +202,6 @@
             font-size: 1rem;
             font-family: 'Inter', sans-serif;
             box-sizing: border-box;
-            display: inline-block;
             transition: box-shadow 0.3s ease;
         }
 
@@ -268,7 +267,7 @@
                 font-size: 1rem;
                 padding: 8px;
             }
-            #siguiente-btn, #agregar-pregunta-btn, #generar-enlace-btn, #nueva-pregunta-btn {
+            #siguiente-btn, #agregar-pregunta-btn, #generar-enlace-btn {
                 font-size: 1rem;
                 padding: 10px 15px;
             }
@@ -290,21 +289,18 @@
     <div class="quiz-container" id="crear-quiz">
         <h1>Quizz studio</h1>
         <input type="hidden" id="profesor-id" value="profesor3">
-        <button id="nueva-pregunta-btn">Nueva Pregunta</button>
-        <div id="pregunta-inputs" class="oculto">
-            <select id="tipo-pregunta">
-                <option value="multiple">Opción Múltiple</option>
-                <option value="verdadero-falso">Verdadero o Falso</option>
-                <option value="escrita">Escrita</option>
-            </select>
-            <textarea id="nueva-pregunta" placeholder="Pregunta"></textarea>
-            <input type="text" id="opcion1" placeholder="Opción 1">
-            <input type="text" id="opcion2" placeholder="Opción 2">
-            <input type="text" id="opcion3" placeholder="Opción 3">
-            <input type="text" id="opcion4" placeholder="Opción 4">
-            <input type="text" id="respuesta-correcta" placeholder="Respuesta Correcta">
-            <button id="agregar-pregunta-btn">Agregar Pregunta</button>
-        </div>
+        <select id="tipo-pregunta">
+            <option value="multiple">Opción Múltiple</option>
+            <option value="verdadero-falso">Verdadero o Falso</option>
+            <option value="escrita">Escrita</option>
+        </select>
+        <textarea id="nueva-pregunta" placeholder="Pregunta"></textarea>
+        <input type="text" id="opcion1" placeholder="Opción 1">
+        <input type="text" id="opcion2" placeholder="Opción 2">
+        <input type="text" id="opcion3" placeholder="Opción 3">
+        <input type="text" id="opcion4" placeholder="Opción 4">
+        <input type="text" id="respuesta-correcta" placeholder="Respuesta Correcta">
+        <button id="agregar-pregunta-btn">Agregar Pregunta</button>
         <button id="generar-enlace-btn">Generar Enlace</button>
     </div>
     <div class="quiz-container" id="realizar-quiz">
@@ -373,14 +369,12 @@
         const enlaceInput = document.getElementById("enlace-input");
         const copiarEnlaceBtn = document.getElementById("copiar-enlace-btn");
         const cerrarModalBtn = document.querySelector(".cerrar-modal-btn");
-        const nuevaPreguntaBtn = document.getElementById("nueva-pregunta-btn");
-        const preguntaInputsDiv = document.getElementById("pregunta-inputs");
+        const profesorId = document.getElementById("profesor-id").value;
 
 
         let preguntaActual = 0;
         let puntuacion = 0;
         let quizId = localStorage.getItem("quizId") || generateQuizId();
-        let profesorId = document.getElementById("profesor-id").value;
 
 
         function generateQuizId() {
@@ -466,6 +460,7 @@
 
             opcion2Input.style.display = tipo === "escrita" ? "none" : "block";
             opcion3Input.style.display = tipo === "escrita" ? "none" : "block";
+            opcion4Input.style.display = tipo === "escrita" ? "none" : "block";
         });
 
         agregarPreguntaBtn.addEventListener("click", () => {
@@ -512,7 +507,6 @@
                 localStorage.setItem("preguntas", JSON.stringify(preguntas));
                 alert("Pregunta agregada correctamente");
                 limpiarFormulario();
-                preguntaInputsDiv.classList.add("oculto");
 
                  // Guardar en Firebase
                  const quizData = {
@@ -559,5 +553,17 @@
             enlaceModal.style.display = "none";
         });
 
-        copiarEnlaceBtn.addEventListener("click", ()
+        copiarEnlaceBtn.addEventListener("click", () => {
+            enlaceInput.select();
+            enlaceInput.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(enlaceInput.value);
+            alert("Enlace copiado al portapapeles");
+            enlaceModal.style.display = "none";
+        });
+
+        function getQuizIdFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return {
+                quizId: urlParams.get('quizId'),
+                profesorId:
 
