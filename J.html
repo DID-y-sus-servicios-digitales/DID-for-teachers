@@ -429,7 +429,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
     <script>
-       // Tu código de inicialización de Firebase aquí
+        // Tu código de inicialización de Firebase aquí
         const firebaseConfig = {
             apiKey: "AIzaSyDazGuaXHMpXo-5JDbYfQ8UVDxigrvGqA0",
   authDomain: "quizz-creator-did.firebaseapp.com",
@@ -482,8 +482,9 @@
         let profesorId = document.getElementById("profesor-id").value;
         let tipoPreguntaSeleccionada = "";
         const dominio = "did-y-sus-servicios-digitales.github.io";
-        const nombreArchivo = "quiz.html";
+        const nombreArchivo = "quizz.html";
         const repositorio = "DID-for-teachers";
+        let quizIniciado = false;
 
 
         function generateQuizId() {
@@ -493,6 +494,8 @@
         }
 
         function cargarPregunta() {
+            if (!quizIniciado) return;
+
             if (!preguntas || preguntas.length === 0) {
                 preguntaElemento.textContent = "No hay preguntas disponibles. Por favor, crea un quiz.";
                 opcionesElemento.innerHTML = "";
@@ -520,14 +523,12 @@
         }
 
         function seleccionarRespuesta(respuesta) {
+            if (!quizIniciado) return;
             const pregunta = preguntas[preguntaActual];
             let respuestaUsuario;
 
             if (pregunta.tipo === "multiple" || pregunta.tipo === "verdadero-falso") {
                 respuestaUsuario = respuesta;
             } else if (pregunta.tipo === "escrita") {
-                respuestaUsuario = respuestaEscritaInput.value.trim();
-            }
-
-            if (respuestaUsuario.toLowerCase() === pregunta.respuestaCorrecta.toLowerCase
+                respuesta
 
