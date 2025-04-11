@@ -16,47 +16,8 @@
 <a href="https://did-y-sus-servicios-digitales.github.io/Content-commander/" target="_blank">Content-commander</a>
 <hr>
 <h2>Asignador de notas para los boletines</h2>
-<button onclick="var num,bien,notanum,notacual;
-num=parseInt(prompt("Escribe el número total de preguntas",""));
-bien=parseInt(prompt("Escribe el número de respuestas acertadas",""));
-notanum=parseInt(10*bien/num);
-switch(notanum)
- {
- case 0:
- notacual="Muy Deficiente";
- break;
- case 1:
- notacual="Muy Deficiente";
- break;
- case 2:
- notacual="Deficiente";
- break;
- case 3:
- notacual="Deficiente";
- break;
- case 4:
- notacual="Insuficiente";
- break;
- case 5:
- notacual="Suficiente";
- break;
- case 6:
- notacual="Bien";
- break;
- case 7:
- notacual="Notable";
- break;
- case 8:
- notacual="Notable";
- break;
- case 9:
- notacual="Excelente";
- break;
- case 10:
- notacual="Sobresaliente"; 
- break;
- }
-alert("La nota cualitativa es "+notacual);">Ejecutar</button>
+<button onclick="calcularNota()">Calcular Nota</button>
+<script src="Notas.js"></script>
 <label>Creado por Jorge Pozuelo</label>
 <hr>
 <h2>Horarios</h2>
