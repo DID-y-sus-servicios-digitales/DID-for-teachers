@@ -7,21 +7,22 @@
     background-position: center center; /* Centra la imagen de fondo */
     background-repeat: no-repeat; /* Evita que la imagen se repita */
     background-attachment: fixed; /* **¡Esta es la clave para que la imagen se quede fija!** */
-      z-index: -2;
     }
 .fondo {
   position: fixed;        /* Fija el elemento en la ventana de visualización */
   top: 50%;               /* Mueve el punto de inicio al 50% de la altura desde arriba */
   left: 50%;              /* Mueve el punto de inicio al 50% del ancho desde la izquierda */
   transform: translate(-50%, -50%); /* Centra el elemento sobre sí mismo */
-  z-index: -1;            /* ¡Crucial! Envía el elemento detrás de todo el contenido */
+  z-index: 1;            /* ¡Crucial! Envía el elemento detrás de todo el contenido */
   pointer-events: none;   /* ¡Crucial! Permite que los clics pasen a través del SVG */
 
   /* Opcional: Define el tamaño del contenedor SVG. Puedes ajustarlo según necesites. */
   width: 100vw;           /* 100% del ancho del viewport */
   height: 100vh;          /* 100% de la altura del viewport */
 }
-
+.zindex {
+  z-index: 2;
+}
   </style>
 <link rel="icon" type="image/png" sizes="16x16"  href="favicon-16x16.png">
 <meta name="msapplication-TileColor" content="#ffffff">
@@ -34,6 +35,7 @@
   <rect fill="#FFFFFF" width="1100" higth="1100"></rect>
 </svg>
 <center>
+  <div class="zindex">
 <h1>Content for teachers: DID</h1>
 <hr>
 <h2>My links</h2>
@@ -58,6 +60,7 @@
 </div>
 <hr>
 <h2>Search</h2>
+  </div>
 </center>
 <script async src="https://cse.google.com/cse.js?cx=f4927d40d84e949bb">
 </script>
