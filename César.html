@@ -8,12 +8,19 @@
     background-repeat: no-repeat; /* Evita que la imagen se repita */
     background-attachment: fixed; /* **¡Esta es la clave para que la imagen se quede fija!** */
     }
-    .fondo {
-      position: fixed;
-      top: 50%;
-      bottom: 0;
-      z-index: 0;
-    }
+.fondo {
+  position: fixed;        /* Fija el elemento en la ventana de visualización */
+  top: 50%;               /* Mueve el punto de inicio al 50% de la altura desde arriba */
+  left: 50%;              /* Mueve el punto de inicio al 50% del ancho desde la izquierda */
+  transform: translate(-50%, -50%); /* Centra el elemento sobre sí mismo */
+  z-index: -1;            /* ¡Crucial! Envía el elemento detrás de todo el contenido */
+  pointer-events: none;   /* ¡Crucial! Permite que los clics pasen a través del SVG */
+
+  /* Opcional: Define el tamaño del contenedor SVG. Puedes ajustarlo según necesites. */
+  width: 100vw;           /* 100% del ancho del viewport */
+  height: 100vh;          /* 100% de la altura del viewport */
+}
+
   </style>
 <link rel="icon" type="image/png" sizes="16x16"  href="favicon-16x16.png">
 <meta name="msapplication-TileColor" content="#ffffff">
@@ -22,8 +29,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
 <body>
-<svg>
-  <rect fill="#FFFFFF" width="1100" higth="1100" class="fondo"></rect>
+<svg class="fondo">
+  <rect fill="#FFFFFF" width="1100" higth="1100"></rect>
 </svg>
 <center>
 <h1>Content for teachers: DID</h1>
