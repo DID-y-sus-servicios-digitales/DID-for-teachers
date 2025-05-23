@@ -9,6 +9,7 @@
     background-attachment: fixed; /* **¡Esta es la clave para que la imagen se quede fija!** */
     }
 .fondo {
+  box-color: #FFFFFF;
   position: fixed;        /* Fija el elemento en la ventana de visualización */
   top: 50%;               /* Mueve el punto de inicio al 50% de la altura desde arriba */
   left: 50%;              /* Mueve el punto de inicio al 50% del ancho desde la izquierda */
@@ -17,8 +18,8 @@
   pointer-events: none;   /* ¡Crucial! Permite que los clics pasen a través del SVG */
 
   /* Opcional: Define el tamaño del contenedor SVG. Puedes ajustarlo según necesites. */
-  width: 100vw;           /* 100% del ancho del viewport */
-  height: 100vh;          /* 100% de la altura del viewport */
+  width: 75vw;           /* 100% del ancho del viewport */
+  height: 95vh;          /* 100% de la altura del viewport */
 }
 .zindex {
   z-index: 3;
@@ -33,7 +34,7 @@
 </head>
 <body text="#FFFFFF">
 <svg class="fondo">
-  <rect fill="#FFFFFF" width="1100" higth="1100"></rect>
+  <rect></rect>
 </svg>
 <center>
   <div class="zindex">
