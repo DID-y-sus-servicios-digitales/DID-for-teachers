@@ -16,14 +16,14 @@
   top: 0;               /* Mueve el punto de inicio al 50% de la altura desde arriba */
   left: 50%;              /* Mueve el punto de inicio al 50% del ancho desde la izquierda */
   transform: translate(-50%, -50%); /* Centra el elemento sobre sí mismo */
-  z-index: 50;            /* ¡Crucial! Envía el elemento detrás de todo el contenido */
+  z-index: -1;            /* ¡Crucial! Envía el elemento detrás de todo el contenido */
 
   /* Opcional: Define el tamaño del contenedor SVG. Puedes ajustarlo según necesites. */
   width: 70vw;           /* 100% del ancho del viewport */
   height: 60vh;          /* 100% de la altura del viewport */
 }
 .zindex {
-  z-index: 100;
+  z-index: 1000;
   max-width: 70vw; 
   margin-left: auto;
   margin-right: auto;
