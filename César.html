@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+  <style>
+  body {
+    font-family: "Open Sans";
+    background-image: url('https://cdn.wallpapersafari.com/91/94/AqQK9z.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  button, input, textarea {
+    border: 4px solid #f0f;
+    background-color: white;
+    border-radius: 20px
+  }
+  button:hover {
+    background-color: #f0f;
+    color: white;
+  }
+  input:hover {
+    background-color: #f0f;
+    color: white;
+  }
+  textarea:hover {
+    background-color: #f0f;
+    color: white;
+  }
+  .div{
+    border-radius: 20px;
+    box-shadow: 7px 7px 15px #101010;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+  }
+  .zindex {
+    z-index: 1000;
+    background-color: transparent;
+    max-width: 75vw;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+  }
+  summary {
+    font-family: 'Open Sans', sans-serif;
+  }
+  .popular-website-link {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1.25em;
+  }
+  </style>
+<link rel="icon" type="image/png" sizes="16x16"  href="favicon-16x16.png">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="theme-color" content="#ffffff">
+<title>DID for teachers</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="div">
+<h2>Horario</h2>
+<img id="fotoHorario">
+<input type="file" id="horario"><button onclick="cargarHorario()">Cargar horario</button>
+<hr>
+<h2>Mis enlaces</h2>
+<a href="https://did-y-sus-servicios-digitales.github.io/Content-commander/" target="_blank">Content-commander</a>
+<hr>
+<h2>Tasks</h2>
+    <input type="checkbox"><input type="text" placeholder="introduce tu nota">
+    <input type="checkbox"><input type="text" placeholder="introduce tu nota">
+    <input type="checkbox"><input type="text" placeholder="introduce tu nota">
+    <input type="checkbox"><input type="text" placeholder="introduce tu nota">
+<hr>
+<h2>Búsqueda</h2>
+<script async src="https://cse.google.com/cse.js?cx=f4927d40d84e949bb">
+</script> 
+<div class="gcse-search"></div>
+<details>
+<summary>Sitios web populares</summary>
+<p><a href="https://sites.google.com/view/did-y-sus-servicios-digitales/inicio?authuser=0" target="_blank" class="popular-website-link">Pagina oficial DID</a></p>
+<a href="https://sites.google.com/view/muniz-pelculas/inicio?authuser=0" target="_blank" class="popular-website-link">Muniz peliculas</a>
+<p><a href="https://www.youtube.com/?gl=ES&hl=es&app=desktop" target="_blank" class="popular-website-link">youtube</a></p>
+<p><a href="https://mail.google.com/mail/mu/mp/231/#tl/priority/%5Esmartlabel_personal" target="_blank" class="popular-website-link">gmail</a></p>
+<p><a href="https://m365.cloud.microsoft/?auth=2" target="_blank" class="popular-website-link">Copilot M365</a></p> 
+</details>
+<hr>
+<h2>Notas inteligentes</h2>
+<textarea id="miAreaTexto" cols="50" rows="18" placeholder="Escribe algo, se guardará para más tarde"></textarea>
+<p><button id="guardarBtn">Guardar las notas para más tarde</button></p>
+<hr>
+<p>Creado por Daniel Tejedor</p>
+<script>
+  let horarioGuardado = localStorage.getItem("horario");
+  if (horarioGuardado !== null) {
+    document.getElementById("fotoHorario").src = horarioGuardado;
+  }
+  let notasGuardadas = localStorage.getItem("notas");
+  if (notasGuardadas !== null) {
+    document.getElementById("miAreaTexto").value = notasGuardadas;
+  }
+  function guardar() {
+    var texto = document.getElementById("miAreaTexto").value;
+    localStorage.setItem("notas", texto);
+  }
+  function cargarHorario() {
+    var archivo = document.getElementById("horario").files[0];
+    var lector = new FileReader();
+    lector.onload = function(e) {
+      var contenido = e.target.result;
+      document.getElementById("fotoHorario").src = contenido;
+    };
+    lector.readAsDataURL(archivo);
+    localStorage.setItem("horario", document.getElementById("fotoHorario").src);
+  }
+</script>
+</body>
+</html>
