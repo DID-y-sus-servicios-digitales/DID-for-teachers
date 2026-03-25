@@ -67,59 +67,69 @@
 </head>
 <body>
 <div class="div">
-<h2>Horario</h2>
-<img id="fotoHorario">
-<input type="file" id="horario"><button onclick="cargarHorario()">Cargar horario</button>
-<hr>
-<h2>Mis enlaces</h2>
-<a href="https://did-y-sus-servicios-digitales.github.io/Content-commander/" target="_blank">Content-commander</a>
-<hr>
-<h2>Tasks</h2>
-    <input type="checkbox"><input type="text" placeholder="introduce tu nota">
-    <input type="checkbox"><input type="text" placeholder="introduce tu nota">
-    <input type="checkbox"><input type="text" placeholder="introduce tu nota">
-    <input type="checkbox"><input type="text" placeholder="introduce tu nota">
-<hr>
-<h2>Búsqueda</h2>
-<script async src="https://cse.google.com/cse.js?cx=f4927d40d84e949bb">
-</script> 
-<div class="gcse-search"></div>
-<details>
-<summary>Sitios web populares</summary>
-<p><a href="https://sites.google.com/view/did-y-sus-servicios-digitales/inicio?authuser=0" target="_blank" class="popular-website-link">Pagina oficial DID</a></p>
-<a href="https://sites.google.com/view/muniz-pelculas/inicio?authuser=0" target="_blank" class="popular-website-link">Muniz peliculas</a>
-<p><a href="https://www.youtube.com/?gl=ES&hl=es&app=desktop" target="_blank" class="popular-website-link">youtube</a></p>
-<p><a href="https://mail.google.com/mail/mu/mp/231/#tl/priority/%5Esmartlabel_personal" target="_blank" class="popular-website-link">gmail</a></p>
-<p><a href="https://m365.cloud.microsoft/?auth=2" target="_blank" class="popular-website-link">Copilot M365</a></p> 
-</details>
-<hr>
-<h2>Notas inteligentes</h2>
-<textarea id="miAreaTexto" cols="50" rows="18" placeholder="Escribe algo, se guardará para más tarde"></textarea>
-<p><button id="guardarBtn">Guardar las notas para más tarde</button></p>
-<hr>
+  <h1 id="nombre"></h1>
+  <div id="tablon">
+
+  </div>
+  <button onclick="anadirtexto()">Añadir texto</button>
+  <button onclick="anadirTitulo()">Añadir título</button>
+
 <p>Creado por Daniel Tejedor</p>
+</div>
 <script>
-  let horarioGuardado = localStorage.getItem("horario");
-  if (horarioGuardado !== null) {
-    document.getElementById("fotoHorario").src = horarioGuardado;
+  function anadirtexto() {
+    const texto = prompt("Introduce el texto que quieres añadir al tablón:");
+    if (texto) {
+      const parrafo = document.createElement("p");
+      parrafo.textContent = texto;
+      parrafo.style.textAlign = "center";
+      parrafo.contentEditable = "true";
+      document.getElementById("tablon").appendChild(parrafo);
+    }
   }
-  let notasGuardadas = localStorage.getItem("notas");
-  if (notasGuardadas !== null) {
-    document.getElementById("miAreaTexto").value = notasGuardadas;
+  function anadirTitulo() {
+    const titulo = prompt("Introduce el título que quieres añadir al tablón:");
+    if (titulo) {
+      const h2 = document.createElement("h2");
+      h2.textContent = titulo;
+      h2.style.textAlign = "center";
+      h2.contentEditable = "true";
+      document.getElementById("tablon").appendChild(h2);
+    }
   }
-  function guardar() {
-    var texto = document.getElementById("miAreaTexto").value;
-    localStorage.setItem("notas", texto);
+</script>
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyBNxuXBtO9LG81LAfnlMjyYgdVdP-4pz9c",
+    authDomain: "didteachers.firebaseapp.com",
+    projectId: "didteachers",
+    storageBucket: "didteachers.firebasestorage.app",
+    messagingSenderId: "197082231963",
+    appId: "1:197082231963:web:489a176bb373b4181a023e"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const usuario = prompt("Introduce tu nombre de usuario:")
+  function cargarTablon() {
   }
-  function cargarHorario() {
-    var archivo = document.getElementById("horario").files[0];
-    var lector = new FileReader();
-    lector.onload = function(e) {
-      var contenido = e.target.result;
-      document.getElementById("fotoHorario").src = contenido;
-    };
-    lector.readAsDataURL(archivo);
-    localStorage.setItem("horario", document.getElementById("fotoHorario").src);
+  function guadarTablon() {
+    const tabRef = doc(db, usuario, "tablon");
+    try {
+      const tablon = document.getElementById("tablon").innerHTML;
+      setDoc(tabRef, {
+        tablon: tablon
+      });
+    } catch (error) {
+      alert("error")
+    }
   }
 </script>
 </body>
