@@ -73,6 +73,7 @@
   </div>
   <button onclick="anadirtexto()">Añadir texto</button>
   <button onclick="anadirTitulo()">Añadir título</button>
+  <button id="guardar">Guardar tablón</button>
 
 <p>Creado por Daniel Tejedor</p>
 </div>
@@ -101,6 +102,7 @@
 <script type="module">
   // Import the functions you need from the SDKs you need
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+  import { getFirestore, collection, doc, setDoc, getDoc, addDoc, onSnapshot} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
   // TODO: Add SDKs for Firebase products that you want to use
   // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -118,17 +120,34 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
   const usuario = prompt("Introduce tu nombre de usuario:")
-  function cargarTablon() {
+  async function cargarTablon() {
+    if (!usuario) return;
+
+    // Referencia al documento del usuario
+    const tabRef = doc(db, "profesores", usuario, "tablon");
+
+    // onSnapshot escucha cambios en tiempo real
+    onSnapshot(tabRef, (docSnap) => {
+        if (docSnap.exists()) {
+            const datos = docSnap.data();
+            // Actualizamos el HTML con lo que hay en Firestore
+            document.getElementById("tablon").innerHTML = datos.tablon; 
+        } else {
+          alert("no se ha encontrado tu tablón")
+        }
+    }, (error) => {
+        console.error("Error al leer datos:", error);
+    });
   }
-  function guadarTablon() {
-    const tabRef = doc(db, usuario, "tablon");
+  async function guardarTablon() {
+    const tabRef = doc(db, "profesores", usuario, "tablon");
     try {
       const tablon = document.getElementById("tablon").innerHTML;
-      setDoc(tabRef, {
+      await setDoc(tabRef, {
         tablon: tablon
       });
     } catch (error) {
-      alert("error")
+      alert("error:" + error)
     }
   }
 </script>
