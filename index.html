@@ -74,6 +74,7 @@
   </div>
   <button onclick="anadirtexto()">Añadir texto</button>
   <button onclick="anadirTitulo()">Añadir título</button>
+  <button id="guardar">Guardar tablón</button>
 
 <p>Creado por Daniel Tejedor</p>
 </div>
@@ -101,7 +102,8 @@
 </script>
 <script type="module">
   // Import the functions you need from the SDKs you need
-  import { initializeApp, getFirestore, doc, getDoc, setDoc} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+  import { getFirestore, collection, doc, setDoc, getDoc, addDoc, onSnapshot} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
   // TODO: Add SDKs for Firebase products that you want to use
   // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -136,15 +138,15 @@
       }
     });
   }
-  function guadarTablon() {
+  async function guadarTablon() {
     const tabRef = doc(db, "profesores", usuario, "tablon");
     try {
       const tablon = document.getElementById("tablon").innerHTML;
-      setDoc(tabRef, {
+      await setDoc(tabRef, {
         tablon: tablon
       });
     } catch (error) {
-      alert("error")
+      alert("error:" + error)
     }
   }
 </script>
