@@ -118,7 +118,6 @@
   const usuario = decodeURIComponent(window.location.search.split("user=")[1]);
   document.getElementById("nombre").textContent = usuario;
   if (!usuario) {
-    alert("No se ha especificado un usuario. Redirigiendo a la página de inicio de sesión.");
     window.location.href = "login.html";
   } else {
     cargarTablon();
