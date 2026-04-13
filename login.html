@@ -103,6 +103,7 @@
         } else {
             await setDoc(doc(db, "usuarios", nombreUsuario), {});
             alert("Usuario creado: " + nombreUsuario);
+            window.location.href = "index.html?user=" + encodeURIComponent(nombreUsuario);
         }
     }
   });
