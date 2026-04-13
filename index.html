@@ -99,6 +99,19 @@
       document.getElementById("tablon").appendChild(h2);
     }
   }
+  function anadirEnlace() {
+    const url = prompt("Introduce la URL que quieres añadir al tablón:");
+    if (url) {
+      const enlace = document.createElement("a");
+      enlace.href = url;
+      enlace.textContent = url;
+      enlace.textContent = url;
+      enlace.target = "_blank";
+      enlace.style.textAlign = "center";
+      enlace.contentEditable = "true";
+      document.getElementById("tablon").appendChild(enlace);
+    }
+  }
 </script>
 <script type="module">
   // Import the functions you need from the SDKs you need
@@ -141,6 +154,10 @@
       await setDoc(tabRef, {
         htmlContent: tablon // Guardar como 'htmlContent' para mayor claridad
       });
+      document.getElementById("guardar").textContent = "Guardado";
+      setTimeout(() => {
+        document.getElementById("guardar").textContent = "Guardar tablón";
+      }, 2000);
     } catch (error) {
       alert("error:" + error)
     }
