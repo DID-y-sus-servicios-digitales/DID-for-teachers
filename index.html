@@ -139,7 +139,7 @@
   document.getElementById("guardar").addEventListener("click", guardarTablon); // Guardar al hacer click en el botón
 
   function cargarTablon() {
-    const tabRef = doc(db, "usuarios", usuario, "tablon", "contenido");
+    const tabRef = doc(db, "profesores", usuario, "tablon", "contenido");
     getDoc(tabRef).then((docSnap) => {
       if (docSnap.exists()) {
         document.getElementById("tablon").innerHTML = docSnap.data().htmlContent;
@@ -149,7 +149,7 @@
     }).catch(error => console.error("Error al cargar el tablón:", error));
   }
   async function guardarTablon() {
-    const tabRef = doc(db, "usuarios", usuario, "tablon", "contenido");
+    const tabRef = doc(db, "profesores", usuario, "tablon", "contenido");
     try {
       const tablon = document.getElementById("tablon").innerHTML;
       await setDoc(tabRef, {
