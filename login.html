@@ -32,7 +32,7 @@
     background-color: #f0f;
     color: white;
   }
-  .div{
+  div{
     border-radius: 20px;
     box-shadow: 7px 7px 15px #101010;
     background-color: white;
@@ -67,41 +67,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
 </head>
 <body>
-<div class="div">
-  <h1 id="nombre"></h1>
-  <div id="tablon">
-
-  </div>
-  <button onclick="anadirtexto()">Añadir texto</button>
-  <button onclick="anadirTitulo()">Añadir título</button>
-
-<p>Creado por Daniel Tejedor</p>
+    <div>
+        <input id="usuario" type="text" placeholder="Nombre de usuario">
+        <button id="login">Iniciar sesión</button>
+        <p>Creado por Daniel Tejedor</p>
+    </div>
 </div>
-<script>
-  function anadirtexto() {
-    const texto = prompt("Introduce el texto que quieres añadir al tablón:");
-    if (texto) {
-      const parrafo = document.createElement("p");
-      parrafo.textContent = texto;
-      parrafo.style.textAlign = "center";
-      parrafo.contentEditable = "true";
-      document.getElementById("tablon").appendChild(parrafo);
-    }
-  }
-  function anadirTitulo() {
-    const titulo = prompt("Introduce el título que quieres añadir al tablón:");
-    if (titulo) {
-      const h2 = document.createElement("h2");
-      h2.textContent = titulo;
-      h2.style.textAlign = "center";
-      h2.contentEditable = "true";
-      document.getElementById("tablon").appendChild(h2);
-    }
-  }
-</script>
 <script type="module">
   // Import the functions you need from the SDKs you need
-  import { initializeApp, getFirestore, doc, getDoc, setDoc} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
   // TODO: Add SDKs for Firebase products that you want to use
   // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -118,35 +92,24 @@
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
-  const usuario = decodeURIComponent(window.location.search.split("user=")[1]);
-  document.getElementById("nombre").textContent = usuario;
-  if (!usuario) {
-    alert("No se ha especificado un usuario. Redirigiendo a la página de inicio de sesión.");
-    window.location.href = "login.html";
-  } else {
-    cargarTablon();
-  }
-  document.getElementById("tablon").addEventListener("input", guadarTablon);
-  cargarTablon();
-  function cargarTablon() {
-    const tabRef = doc(db, "profesores", usuario, "tablon");
-    getDoc(tabRef).then((docSnap) => {
-      if (docSnap.exists()) {
-        document.getElementById("tablon").innerHTML = docSnap.data().tablon;
-      }
-    });
-  }
-  function guadarTablon() {
-    const tabRef = doc(db, "profesores", usuario, "tablon");
-    try {
-      const tablon = document.getElementById("tablon").innerHTML;
-      setDoc(tabRef, {
-        tablon: tablon
-      });
-    } catch (error) {
-      alert("error")
+  const usuario = document.getElementById("usuario");
+  const loginButton = document.getElementById("login");
+  loginButton.addEventListener("click", async () => {
+    const nombreUsuario = usuario.value;
+    const comprobarUsuario = await getDoc(doc(db, "profesores", nombreUsuario));
+    if (comprobarUsuario.exists()) {
+      alert("Bienvenido, " + nombreUsuario);
+      window.location.href = "index.html?user=" + encodeURIComponent(nombreUsuario);
+    } else {
+      const crearUsuario = window.confirm("Usuario no encontrado. ¿Quieres crear una cuenta con ese nombre?")
+        if (!crearUsuario) {
+            return;
+        } else {
+            await setDoc(doc(db, "usuarios", nombreUsuario), {});
+            alert("Usuario creado: " + nombreUsuario);
+        }
     }
-  }
+  });
 </script>
 </body>
 </html>
