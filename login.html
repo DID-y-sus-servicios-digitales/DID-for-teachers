@@ -101,7 +101,7 @@
         if (!crearUsuario) {
             return;
         } else {
-            await setDoc(doc(db, "usuarios", nombreUsuario), {});
+            await setDoc(doc(db, "profesores", nombreUsuario), {});
             alert("Usuario creado: " + nombreUsuario);
             window.location.href = "index.html?user=" + encodeURIComponent(nombreUsuario);
         }
