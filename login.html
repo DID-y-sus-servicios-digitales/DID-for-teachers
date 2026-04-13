@@ -76,10 +76,7 @@
 <script type="module">
   // Import the functions you need from the SDKs you need
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js"; // Importar Firestore y sus funciones
   const firebaseConfig = {
     apiKey: "AIzaSyBNxuXBtO9LG81LAfnlMjyYgdVdP-4pz9c",
     authDomain: "didteachers.firebaseapp.com",
@@ -89,7 +86,6 @@
     appId: "1:197082231963:web:489a176bb373b4181a023e"
   };
 
-  // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
   const usuario = document.getElementById("usuario");

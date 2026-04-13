@@ -103,11 +103,7 @@
 <script type="module">
   // Import the functions you need from the SDKs you need
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-  import { getFirestore, collection, doc, setDoc, getDoc, addDoc, onSnapshot} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
+  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
   const firebaseConfig = {
     apiKey: "AIzaSyBNxuXBtO9LG81LAfnlMjyYgdVdP-4pz9c",
     authDomain: "didteachers.firebaseapp.com",
@@ -117,7 +113,6 @@
     appId: "1:197082231963:web:489a176bb373b4181a023e"
   };
 
-  // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
   const usuario = decodeURIComponent(window.location.search.split("user=")[1]);
@@ -128,22 +123,24 @@
   } else {
     cargarTablon();
   }
-  document.getElementById("tablon").addEventListener("input", guadarTablon);
-  cargarTablon();
+  document.getElementById("guardar").addEventListener("click", guardarTablon); // Guardar al hacer click en el botón
+
   function cargarTablon() {
-    const tabRef = doc(db, "profesores", usuario, "tablon");
+    const tabRef = doc(db, "usuarios", usuario, "tablon", "contenido");
     getDoc(tabRef).then((docSnap) => {
       if (docSnap.exists()) {
-        document.getElementById("tablon").innerHTML = docSnap.data().tablon;
+        document.getElementById("tablon").innerHTML = docSnap.data().htmlContent;
+      } else {
+        console.log("No hay tablón guardado para este usuario.");
       }
-    });
+    }).catch(error => console.error("Error al cargar el tablón:", error));
   }
-  async function guadarTablon() {
-    const tabRef = doc(db, "profesores", usuario, "tablon");
+  async function guardarTablon() {
+    const tabRef = doc(db, "usuarios", usuario, "tablon", "contenido");
     try {
       const tablon = document.getElementById("tablon").innerHTML;
       await setDoc(tabRef, {
-        tablon: tablon
+        htmlContent: tablon // Guardar como 'htmlContent' para mayor claridad
       });
     } catch (error) {
       alert("error:" + error)
