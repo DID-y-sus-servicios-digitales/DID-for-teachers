@@ -13,7 +13,6 @@
 <body>
 <div class="div">
   <h3 id="nombre"></h3>
-  <button onclick="editable()" id="modo">cambiar a modo no editable</button>
   <div id="tablon">
 
   </div>
@@ -30,20 +29,6 @@
   <button onclick="anadirHTML()">Añadir HTML</button>
 </div>
 <script>
-  var editable = "true";
-  function editable() {
-    const tablon = document.getElementById("tablon");
-    if (editable === "true") {
-      tablon.contentEditable = "false";
-      editable = "false";
-      document.getElementById("modo").textContent = "cambiar a modo editable";
-    } else {
-      tablon.contentEditable = "true";
-      editable = "true";
-      document.getElementById("modo").textContent = "cambiar a modo no editable";
-    }
-    editable = !editable;
-  }
   function anadirHTML() {
     const html = document.getElementById("html").value;
     if (html) {
