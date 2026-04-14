@@ -74,7 +74,8 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
-  const usuario = decodeURIComponent(window.location.search.split("user=")[1]);
+  const urlParams = new URLSearchParams(window.location.search);
+  const usuario = urlParams.get('user');
   document.getElementById("nombre").textContent = usuario;
   if (!usuario) {
     window.location.href = "login.html";
