@@ -38,7 +38,6 @@
     const nombreUsuario = usuario.value;
     const comprobarUsuario = await getDoc(doc(db, "profesores", nombreUsuario));
     if (comprobarUsuario.exists()) {
-      alert("Bienvenido, " + nombreUsuario);
       window.location.href = "index.html?user=" + encodeURIComponent(nombreUsuario);
     } else {
       const crearUsuario = window.confirm("Usuario no encontrado. ¿Quieres crear una cuenta con ese nombre?")
