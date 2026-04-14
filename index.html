@@ -2,63 +2,7 @@
 <html>
 <head>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
-  <style>
-  body {
-    font-family: "Open Sans";
-    background-image: url('https://cdn.wallpapersafari.com/91/94/AqQK9z.jpg');
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-  button, input, textarea {
-    border: 4px solid #f0f;
-    background-color: white;
-    border-radius: 20px
-  }
-  button:hover {
-    background-color: #f0f;
-    color: white;
-  }
-  input:hover {
-    background-color: #f0f;
-    color: white;
-  }
-  textarea:hover {
-    background-color: #f0f;
-    color: white;
-  }
-  .div{
-    border-radius: 20px;
-    box-shadow: 7px 7px 15px #101010;
-    background-color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 30px;
-    gap: 5px;
-  }
-  .zindex {
-    z-index: 1000;
-    background-color: transparent;
-    max-width: 75vw;
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
-  }
-  summary {
-    font-family: 'Open Sans', sans-serif;
-  }
-  .popular-website-link {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 1.25em;
-  }
-  </style>
+  <link href="styles.css" rel="stylesheet">
 <link rel="icon" type="image/png" sizes="16x16"  href="favicon-16x16.png">
 <meta name="msapplication-TileColor" content="#ffffff">
 <meta name="theme-color" content="#ffffff">
@@ -68,7 +12,8 @@
 </head>
 <body>
 <div class="div">
-  <h1 id="nombre"></h1>
+  <h3 id="nombre"></h3>
+  <button onclick="editable()" id="modo">cambiar a modo no editable</button>
   <div id="tablon">
 
   </div>
@@ -79,7 +24,36 @@
 
 <p>Creado por Daniel Tejedor</p>
 </div>
+<br>
+<div class="div">
+  <textarea id="html" rows="10" cols="50" placeholder="Introduce el código HTML que quieres añadir al tablón"></textarea>
+  <button onclick="anadirHTML()">Añadir HTML</button>
+</div>
 <script>
+  var editable = "true";
+  function editable() {
+    const tablon = document.getElementById("tablon");
+    if (editable === "true") {
+      tablon.contentEditable = "false";
+      editable = "false";
+      document.getElementById("modo").textContent = "cambiar a modo editable";
+    } else {
+      tablon.contentEditable = "true";
+      editable = "true";
+      document.getElementById("modo").textContent = "cambiar a modo no editable";
+    }
+    editable = !editable;
+  }
+  function anadirHTML() {
+    const html = document.getElementById("html").value;
+    if (html) {
+      const contenedor = document.createElement("div");
+      contenedor.innerHTML = html;
+      contenedor.style.textAlign = "center";
+      contenedor.contentEditable = "true";
+      document.getElementById("tablon").appendChild(contenedor);
+    }
+  }
   function anadirtexto() {
     const texto = prompt("Introduce el texto que quieres añadir al tablón:");
     if (texto) {
@@ -130,7 +104,7 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
   const usuario = decodeURIComponent(window.location.search.split("user=")[1]);
-  document.getElementById("nombre").textContent = usuario;
+  document.getElementById("nombre").textContent = "hola, " + usuario;
   if (!usuario) {
     window.location.href = "login.html";
   } else {
