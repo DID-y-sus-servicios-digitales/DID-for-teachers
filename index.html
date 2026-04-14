@@ -24,21 +24,7 @@
 <p>Creado por Daniel Tejedor</p>
 </div>
 <br>
-<div class="div">
-  <textarea id="html" rows="10" cols="50" placeholder="Introduce el código HTML que quieres añadir al tablón"></textarea>
-  <button onclick="anadirHTML()">Añadir HTML</button>
-</div>
 <script>
-  function anadirHTML() {
-    const html = document.getElementById("html").value;
-    if (html) {
-      const contenedor = document.createElement("div");
-      contenedor.innerHTML = html;
-      contenedor.style.textAlign = "center";
-      contenedor.contentEditable = "true";
-      document.getElementById("tablon").appendChild(contenedor);
-    }
-  }
   function anadirtexto() {
     const texto = prompt("Introduce el texto que quieres añadir al tablón:");
     if (texto) {
@@ -91,7 +77,7 @@
   const usuario = decodeURIComponent(window.location.search.split("user=")[1]);
   document.getElementById("nombre").textContent = "hola, " + usuario;
   if (!usuario) {
-    window.location.href = "login.html";
+    sinRegistro();
   } else {
     cargarTablon();
   }
@@ -121,6 +107,12 @@
     } catch (error) {
       alert("error:" + error)
     }
+  }
+  function sinRegistro() {
+    document.querySelectorAll("div").style.display = "none";
+    const mensaje = document.createElement("div");
+    mensaje.innerHTML = `<h2>Usuario no registrado</h2><p>Por favor, inicia sesión para acceder al tablón.</p><button onclick="window.location.href='login.html'">Ir a iniciar sesión</button>`;
+    document.body.appendChild(mensaje);
   }
 </script>
 </body>
