@@ -28,14 +28,14 @@
 <script>
   var edit = true;
   function editable() {
-    if (editable) {
+    if (edit) {
       document.getElementById("tablon").contentEditable = "false";
       document.getElementById("editbtn").textContent = "Cambiar a editable";
       document.querySelectorAll(".elementoDinamico").forEach(el => el.contentEditable = "false");
-      editable = false;
+      edit = false;
     } else {
       document.querySelectorAll(".elementoDinamico").forEach(el => el.contentEditable = "true");
-      editable = true;
+      edit = true;
       document.getElementById("editbtn").textContent = "Cambiar a no editable";
     }
   }
