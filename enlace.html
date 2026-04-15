@@ -21,7 +21,20 @@
     setTimeout(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const targetUrl = urlParams.get('enlace');
-        window.location.replace('https://' + targetUrl);
+        if (targetUrl.includes("https://")) {
+            window.location.replace(targetUrl);
+        }
+        else if (targetUrl.includes("http://")) {
+            const insegura = confirm("Esta url no es segura, ¿desea abrirla?")
+            if (insegura) {
+                window.location.replace(targetUrl);
+            } else {
+                window.close()
+            }
+        }
+        else {
+            window.location.replace('https://' + targetUrl);
+        }
     }, 2000);
 </script>
 </body>
