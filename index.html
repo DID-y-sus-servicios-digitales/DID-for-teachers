@@ -106,6 +106,9 @@
     getDoc(tabRef).then((docSnap) => {
       if (docSnap.exists()) {
         document.getElementById("tablon").innerHTML = docSnap.data().htmlContent;
+        // Hacemos que los elementos cargados sean editables
+        document.getElementById("tablon").contentEditable = "true";
+        document.querySelectorAll("#tablon > *").forEach(el => el.contentEditable = "true");
       } else {
         null
       }
