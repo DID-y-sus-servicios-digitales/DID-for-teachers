@@ -12,13 +12,18 @@
 </head>
 <body>
     <div class="div">
-        <h1>Te estamos redirigiendo...</h1>
+        <h1 id="titulo">Te estamos redirigiendo.</h1>
         <h2>abrimos tus enlaces de forma segura</h2>
-        <div class="cargando"></div>
         <p>Creado por Daniel Tejedor</p>
     </div>
 </div>
 <script>
+    setTimeout(() => {
+        document.getElementById("titulo").innerText = "Te estamos redirigiendo.."
+        setTimeout(() => {
+            document.getElementById("titulo").innerText = "Te estamos redirigiendo..."
+        }, 1000)
+    }, 1000)
     setTimeout(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const targetUrl = urlParams.get('enlace');
@@ -36,7 +41,7 @@
         else {
             window.location.replace('https://' + targetUrl);
         }
-    }, 2000);
+    }, 2400);
 </script>
 </body>
 </html>
