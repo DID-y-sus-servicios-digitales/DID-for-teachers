@@ -19,8 +19,8 @@
 </div>
 <script>
     setTimeout(() => {
-        const path = window.location.pathname;
-        const targetUrl = path.substring(path.indexOf('404.html') + '404.html'.length + 1);
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetUrl = urlParams.get('enlace');
         window.location.replace('https://' + targetUrl);
     }, 2000);
 </script>
