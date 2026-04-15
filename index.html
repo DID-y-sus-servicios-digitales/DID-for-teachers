@@ -12,6 +12,7 @@
 </head>
 <body>
 <div class="div">
+  <button onclick="editable()" id="editbtn">Cambiar a no editable</button>
   <h3 id="nombre"></h3>
   <div id="tablon">
 
@@ -25,13 +26,27 @@
 </div>
 <br>
 <script>
+  var editable = true;
+  function editable() {
+    if (editable) {
+      document.getElementById("tablon").contentEditable = "false";
+      document.getElementById("editbtn").textContent = "Cambiar a editable";
+      document.querySelectorAll(".elementoDinamico").forEach(el => el.contentEditable = "false");
+      editable = false;
+    } else {
+      document.querySelectorAll(".elementoDinamico").forEach(el => el.contentEditable = "true");
+      editable = true;
+      document.getElementById("editbtn").textContent = "Cambiar a no editable";
+    }
+  }
   function anadirtexto() {
     const texto = prompt("Introduce el texto que quieres añadir al tablón:");
     if (texto) {
       const parrafo = document.createElement("p");
-      parrafo.textContent = texto;
+      parrafo.innerHTML = texto;
       parrafo.style.textAlign = "center";
       parrafo.contentEditable = "true";
+      parrafo.class = "elementoDinamico";
       document.getElementById("tablon").appendChild(parrafo);
     }
   }
@@ -39,9 +54,10 @@
     const titulo = prompt("Introduce el título que quieres añadir al tablón:");
     if (titulo) {
       const h2 = document.createElement("h2");
-      h2.textContent = titulo;
+      h2.innerHTML = titulo;
       h2.style.textAlign = "center";
       h2.contentEditable = "true";
+      h2.class = "elementoDinamico";
       document.getElementById("tablon").appendChild(h2);
     }
   }
@@ -50,11 +66,11 @@
     if (url) {
       const enlace = document.createElement("a");
       enlace.href = url;
-      enlace.textContent = url;
-      enlace.textContent = url;
+      enlace.innerHTML = url;
       enlace.target = "_blank";
       enlace.style.textAlign = "center";
       enlace.contentEditable = "true";
+      enlace.class = "elementoDinamico";
       document.getElementById("tablon").appendChild(enlace);
     }
   }
@@ -76,7 +92,7 @@
   const db = getFirestore(app);
   const urlParams = new URLSearchParams(window.location.search);
   const usuario = urlParams.get('user');
-  document.getElementById("nombre").textContent = usuario;
+  document.getElementById("nombre").textContent = "Hola," + usuario;
   if (!usuario) {
     window.location.href = "login.html";
   } else {
