@@ -34,6 +34,7 @@
       document.querySelectorAll(".elementoDinamico").forEach(el => el.contentEditable = "false");
       edit = false;
     } else {
+      document.getElementById("tablon").contentEditable = "true";
       document.querySelectorAll(".elementoDinamico").forEach(el => el.contentEditable = "true");
       edit = true;
       document.getElementById("editbtn").textContent = "Cambiar a no editable";
@@ -46,7 +47,7 @@
       parrafo.innerHTML = texto;
       parrafo.style.textAlign = "center";
       parrafo.contentEditable = "true";
-      parrafo.class = "elementoDinamico";
+      parrafo.className = "elementoDinamico";
       document.getElementById("tablon").appendChild(parrafo);
     }
   }
@@ -57,7 +58,7 @@
       h2.innerHTML = titulo;
       h2.style.textAlign = "center";
       h2.contentEditable = "true";
-      h2.class = "elementoDinamico";
+      h2.className = "elementoDinamico";
       document.getElementById("tablon").appendChild(h2);
     }
   }
@@ -70,7 +71,7 @@
       enlace.target = "_blank";
       enlace.style.textAlign = "center";
       enlace.contentEditable = "true";
-      enlace.class = "elementoDinamico";
+      enlace.className = "elementoDinamico";
       document.getElementById("tablon").appendChild(enlace);
     }
   }
@@ -106,7 +107,7 @@
       if (docSnap.exists()) {
         document.getElementById("tablon").innerHTML = docSnap.data().htmlContent;
       } else {
-        console.log("No hay tablón guardado para este usuario.");
+        null
       }
     }).catch(error => console.error("Error al cargar el tablón:", error));
   }
