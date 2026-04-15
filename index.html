@@ -66,7 +66,7 @@
     const url = prompt("Introduce la URL que quieres añadir al tablón:");
     if (url) {
       const enlace = document.createElement("a");
-      enlace.href = url;
+      enlace.href = "404.html/" + url; // Usamos el sistema de redirección segura
       enlace.innerHTML = url;
       enlace.target = "_blank";
       enlace.style.textAlign = "center";
