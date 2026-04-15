@@ -93,7 +93,7 @@
   const db = getFirestore(app);
   const urlParams = new URLSearchParams(window.location.search);
   const usuario = urlParams.get('user');
-  document.getElementById("nombre").textContent = "Hola," + usuario;
+  document.getElementById("nombre").textContent = "Hola, " + usuario;
   if (!usuario) {
     window.location.href = "login.html";
   } else {
