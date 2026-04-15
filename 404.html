@@ -19,13 +19,9 @@
 </div>
 <script>
     setTimeout(() => {
-        const url = window.location.href;
-        const nombreHtml = url.substring(url.lastIndexOf('/') + 1);
-        window.open(nombreHtml);
-        document.head.querySelector('title').textContent = "Cerrando...";
-        setTimeout(() => {
-            window.close();
-        }, 2000);
+        const path = window.location.pathname;
+        const targetUrl = path.substring(path.indexOf('404.html') + '404.html'.length + 1);
+        window.location.replace('https://' + targetUrl);
     }, 2000);
 </script>
 </body>
