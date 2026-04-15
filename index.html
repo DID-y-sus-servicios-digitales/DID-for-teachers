@@ -100,7 +100,9 @@
     cargarTablon();
   }
   document.getElementById("guardar").addEventListener("click", guardarTablon); // Guardar al hacer click en el botón
-
+  document.getElementById("tablon").addEventListener("input", () => {
+    guardarTablon();
+  });
   function cargarTablon() {
     const tabRef = doc(db, "profesores", usuario, "tablon", "contenido");
     getDoc(tabRef).then((docSnap) => {
