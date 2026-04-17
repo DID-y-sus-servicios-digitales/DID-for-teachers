@@ -19,21 +19,27 @@
   <div id="tablon" class="div"></div>
 <br>
 <div class="div">
-  <button onclick="anadirtexto()">Añadir texto</button>
-  <button onclick="anadirTitulo()">Añadir título</button>
-  <button onclick="anadirEnlace()">Añadir enlace</button>
+  <div style="display: flex; justify-content: center; gap: 5px;">
+    <button onclick="anadirtexto()">Añadir texto</button>
+    <button onclick="anadirTitulo()">Añadir título</button>
+    <button onclick="anadirEnlace()">Añadir enlace</button>
+    <button onclick="mostrarHTML()">Añadir HTML</button>
+  </div>
   <button id="guardar" class="guardar">Guardar tablón</button>
   <div class="anuncio" onclick="window.open('quiz.html', '_self')"><p>Prueba DID quiz</p></div>
   <p>Creado por Daniel Tejedor</p>
 </div>
 <br>
-<div class="div">
+<div class="div" id="htmlInputConitainer" style="display: none; position: fixed; z-index: 9999; top: 50%; left: 100px;">
   <textarea id="htmlInput" style="height: 50px;"></textarea>
-  <button onclick="anadirHTML()">Añadir HTML</button>
+  <p><button onclick="anadirHTML()">Añadir HTML</button></p>
 </div>
 <br>
 <script>
   var edit = true;
+  function mostrarHTML() {
+    document.getElementById("htmlInputConitainer").style.display = "block";
+  }
   function editable() {
     if (edit) {
       document.getElementById("tablon").contentEditable = "false";
@@ -76,6 +82,8 @@
     div.contentEditable = "true";
     div.className = "elementoDinamico";
     document.getElementById("tablon").appendChild(div);
+    document.getElementById("htmlInput").value = "";
+    document.getElementById("htmlInputConitainer").style.display = "none";
   }
   function anadirEnlace() {
     const url = prompt("Introduce la URL que quieres añadir al tablón:");

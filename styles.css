@@ -37,6 +37,7 @@ body {
     justify-content: center;
     padding: 30px;
     gap: 5px;
+    width: 80%;
   }
   .zindex {
     z-index: 1000;
@@ -143,7 +144,7 @@ body {
 }
 .guardar {
   background-color: #f0f;
-  color: aqua;
+  color: black;
   border-radius: 50px;
 }
 .guardar:hover {
