@@ -68,45 +68,6 @@ body {
       transform: rotate(180deg);
     }
   }
-@media (max-width: 600px) {
-        body {
-            font-size: 1.1em;
-            line-height: 1.6;
-            padding: 10px;
-        }
-        div {
-            width: 100%;
-            margin: 10px 0;
-            padding: 10px;
-            box-sizing: border-box;
-        }
-        input,textarea{
-            width: 100%;
-            max-width: 100%;
-            font-size: 1em;
-            padding: 12px;
-            margin-top: 8px;
-            margin-bottom: 8px;
-            box-sizing: border-box;
-            border-radius: 20px;
-            overflow: hidden;
-        }
-        #mensaje {
-            font-size: 0.9em;
-            padding: 10px;
-        }
-        button {
-            min-height: 48px;
-            margin-top: 15px;
-        }
-        textarea {
-            min-height: 150px;
-            resize: none;
-        }
-        .menu{
-            border: 2px solid #f0f;
-        }
-    }
 .anuncio {
   border-radius: 5px;
   background-image: linear-gradient(90deg, blue, #800080);
