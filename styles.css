@@ -55,7 +55,10 @@ body {
     font-size: 1.25em;
   }
   #tablon {
-    min-width: 200px;
+    height: 200px;
+  }
+  #tablon:hover {
+    z-index: 9999;   
   }
   .cargando {
     animation: load 1s infinite;
@@ -142,13 +145,19 @@ body {
   justify-content: center;
   cursor: pointer;
 }
-.guardar {
-  background-color: #f0f;
-  color: black;
-  border-radius: 50px;
+.titulo {
+  position: fixed;
+  top: 4px;
+  left: 4px;
+  width: 125px;
+  padding: 0px;
+  border-radius: 10px;
+  background-image: linear-gradient(#d7a7ff, #d7a7ff, white);
 }
-.guardar:hover {
-  background-color: #800080;
-  color: aqua;
-  border-radius: 50px;
+.opciones {
+  position: fixed;
+  top: 440px;
+  left: 80px;
+  padding: 5px;
+  border-radius: 10px;
 }

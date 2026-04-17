@@ -11,22 +11,22 @@
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
 </head>
 <body>
-<div class="div">
+<div class="div titulo">
   <button onclick="editable()" id="editbtn">Cambiar a no editable</button>
-  <h3 id="nombre"></h3>
+  <h3 id="nombre" style="cursor: pointer;" title="Volver a iniciar sesión" onclick="window.location.href = 'login.html'"></h3>
 </div>
 <br>
   <div id="tablon" class="div"></div>
 <br>
-<div class="div">
+<div class="div opciones">
   <div style="display: flex; justify-content: center; gap: 5px;">
     <button onclick="anadirtexto()">Añadir texto</button>
     <button onclick="anadirTitulo()">Añadir título</button>
     <button onclick="anadirEnlace()">Añadir enlace</button>
     <button onclick="mostrarHTML()">Añadir HTML</button>
+    <button id="guardar" class="guardar">Guardar tablón</button>
+     <div class="anuncio" onclick="window.open('quiz.html', '_self')"><p>Prueba DID quiz</p></div>
   </div>
-  <button id="guardar" class="guardar">Guardar tablón</button>
-  <div class="anuncio" onclick="window.open('quiz.html', '_self')"><p>Prueba DID quiz</p></div>
   <p>Creado por Daniel Tejedor</p>
 </div>
 <br>
