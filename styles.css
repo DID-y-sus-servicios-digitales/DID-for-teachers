@@ -28,7 +28,7 @@ body {
     color: white;
   }
   .div{
-    border-radius: 20px;
+    border-radius: 10px;
     box-shadow: 7px 7px 15px #101010;
     background-color: white;
     display: flex;
@@ -39,23 +39,9 @@ body {
     gap: 5px;
     width: 80%;
   }
-  .zindex {
-    z-index: 1000;
-    background-color: transparent;
-    max-width: 75vw;
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
-  }
-  summary {
-    font-family: 'Open Sans', sans-serif;
-  }
-  .popular-website-link {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 1.25em;
-  }
   #tablon {
-    height: 200px;
+    min-height: 200px;
+    width: 700px;
   }
   #tablon:hover {
     z-index: 9999;   
@@ -146,6 +132,8 @@ body {
   cursor: pointer;
 }
 .titulo {
+  display: flex;
+  justify-content: center;
   position: fixed;
   top: 4px;
   left: 4px;
@@ -156,8 +144,10 @@ body {
 }
 .opciones {
   position: fixed;
-  top: 440px;
-  left: 80px;
+  top: 80%;
+  left: auto;
+  right: auto;
   padding: 5px;
+  width: 6000px;
   border-radius: 10px;
 }
