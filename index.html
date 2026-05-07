@@ -45,10 +45,12 @@
       document.getElementById("tablon").contentEditable = "false";
       document.getElementById("editbtn").textContent = "Cambiar a editable";
       document.querySelectorAll(".elementoDinamico").forEach(el => el.contentEditable = "false");
+      document.querySelectorAll(".elementoDinamico").forEach(el => el.border = "none");
       edit = false;
     } else {
       document.getElementById("tablon").contentEditable = "true";
       document.querySelectorAll(".elementoDinamico").forEach(el => el.contentEditable = "true");
+      document.querySelectorAll(".elementoDinamico").forEach(el => el.border = "2px solid #000");
       edit = true;
       document.getElementById("editbtn").textContent = "Cambiar a no editable";
     }
