@@ -124,9 +124,11 @@
   } else {
     cargarTablon();
   }
+  let esperaDeSeguridad;
   document.getElementById("guardar").addEventListener("click", guardarTablon); // Guardar al hacer click en el botón
   document.getElementById("tablon").addEventListener("input", () => {
-    guardarTablon();
+    clearTimeout(esperaDeSeguridad);
+    esperaDeSeguridad = setTimeout(guardarTablon, 5000)
   });
   function cargarTablon() {
     const tabRef = doc(db, "profesores", usuario, "tablon", "contenido");
