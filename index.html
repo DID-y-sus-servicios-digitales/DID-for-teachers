@@ -127,6 +127,7 @@
   let esperaDeSeguridad;
   document.getElementById("guardar").addEventListener("click", guardarTablon); // Guardar al hacer click en el botón
   document.getElementById("tablon").addEventListener("input", () => {
+    document.getElementById("guardar").textContent = "Guardando...";
     clearTimeout(esperaDeSeguridad);
     esperaDeSeguridad = setTimeout(guardarTablon, 5000)
   });
